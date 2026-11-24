@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Readdy — منصة القراءة والتحليل النحوي السياقي</title>
+<script>try{var t=localStorage.getItem('readdy_theme_mode_v1')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.classList.toggle('dark',t==='dark')}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=block" rel="stylesheet">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+:root{--bg:#fff;--cv:#f3f6fa;--sheet:#fff;--s1:#f8fafd;--s2:#f0f4f9;--bd:#dde3ea;--tx:#1f1f1f;--sub:#444746;--ac:#1a73e8;--ach:#1557b0;--acs:#d3e3fd;--onac:#fff;--onact:#041e49;--ok:#1e8e3e;--hl:#e8f0fe;--sh:0 12px 32px rgba(0,0,0,.18);--hh:56px;--th:46px;--df:'Literata',Georgia,serif;--fs:18px}
+html.dark{--bg:#131314;--cv:#131314;--sheet:#1e1f20;--s1:#1e1f20;--s2:#282a2c;--bd:#333537;--tx:#e3e3e3;--sub:#c4c7c5;--ac:#8ab4f8;--ach:#aecbfa;--acs:#004a77;--onac:#041e49;--onact:#d3e3fd;--ok:#81c995;--hl:#282a2c}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Arabic','Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;display:flex;flex-direction:column;transition:background .2s,color .2s}
+button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+select option{background:var(--s1);color:var(--tx)}
+.ms{font-family:'Material Symbols Outlined';font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;width:1em;height:1em;overflow:hidden;white-space:nowrap;direction:ltr;vertical-align:middle;user-select:none;font-feature-settings:'liga';-webkit-font-feature-settings:'liga';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20}
+.ms.fill{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 20}
+html:not(.icons) .ms{visibility:hidden}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--bd);background:var(--s2);border-radius:999px;padding:7px 14px;font-size:12px;font-weight:500;transition:.15s;white-space:nowrap;flex:none}
+.btn:hover{border-color:var(--ac)}.btn:active{transform:scale(.96)}
+.btn.pri{background:var(--ac);color:var(--onac);border-color:transparent;font-weight:600}.btn.pri:hover{background:var(--ach)}
+.btn.lg{padding:12px 22px;font-size:14px}
+.ibtn{width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:var(--s2);display:inline-grid;place-items:center;flex:none;transition:.15s;position:relative;padding:0}
+.ibtn:hover{border-color:var(--ac)}.ibtn:active{transform:scale(.92)}.ibtn.sm{width:30px;height:30px}.ibtn.on{background:var(--acs);color:var(--ac);border-color:var(--ac)}
+.pill{display:inline-flex;align-items:center;gap:4px;background:var(--s2);border:1px solid var(--bd);border-radius:999px;padding:4px 10px;font-size:12px;white-space:nowrap;flex:none}
+.pill select,.pill input{background:none;border:0;outline:0;font-weight:500;cursor:pointer;max-width:130px}.pill input{width:42px;text-align:center;cursor:text}
+.k{color:var(--sub)}.tag{font-size:10px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--s2);border:1px solid var(--bd);color:var(--sub);text-transform:uppercase}
+.hdr{position:sticky;top:0;z-index:30;height:var(--hh);display:flex;align-items:center;gap:8px;padding:0 clamp(10px,3vw,24px);background:var(--bg);border-bottom:1px solid var(--bd)}
+.brand{display:flex;align-items:center;gap:8px;background:none;border:0;padding:0;flex:none;color:inherit}
+.brand svg{width:30px;height:30px}.brand span{font:700 20px/1 Outfit,sans-serif;letter-spacing:-.3px}
+.play{transform-origin:43px 32px;animation:pulse 2.6s ease-in-out infinite}
+.sp{flex:1;min-width:0}
+#docTitleInput{display:none;width:clamp(120px,22vw,240px);background:none;border:1px solid transparent;border-radius:10px;padding:5px 10px;font-size:14px;font-weight:500;outline:0;text-overflow:ellipsis}
+#docTitleInput:hover{background:var(--s2)}#docTitleInput:focus{border-color:var(--ac)}
+@media(min-width:768px){body.has-doc #docTitleInput{display:block}}
+.badge{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;background:var(--ac);color:var(--onac);font:700 10px/16px sans-serif;text-align:center}
+#empty{flex:1;display:grid;place-items:center;padding:24px 16px}
+.hero{position:relative;width:100%;max-width:640px;background:var(--s1);border:1px solid var(--bd);border-radius:28px;padding:clamp(24px,6vw,48px);text-align:center;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:-40%;background:radial-gradient(closest-side at 30% 30%,rgba(26,115,232,.13),transparent 60%),radial-gradient(closest-side at 70% 70%,rgba(138,180,248,.15),transparent 60%);animation:drift 14s ease-in-out infinite alternate;pointer-events:none}
+.hero>*{position:relative;animation:rise .6s both}.hero>:nth-child(2){animation-delay:.08s}.hero>:nth-child(3){animation-delay:.16s}.hero>:nth-child(4){animation-delay:.24s}.hero>:nth-child(5){animation-delay:.32s}
+.hero h1{font-size:clamp(19px,5vw,25px);margin:0 0 8px}.hero p{font-size:14px;color:var(--sub);line-height:1.8;max-width:450px;margin:0 auto 24px}
+.hero .big{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:14px}.hero .big svg{width:56px;height:56px}.hero .big span{font:700 clamp(28px,8vw,34px)/1 Outfit,sans-serif}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:18px;direction:ltr}
+.chips span{padding:3px 12px;border-radius:99px;background:var(--bg);border:1px solid var(--bd);font:500 13px Literata,serif;color:var(--ac);animation:float 4s ease-in-out infinite;animation-delay:var(--d)}
+.row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.fmts{margin-top:22px;gap:8px}.fmts span{font-size:11px;padding:3px 12px;border-radius:99px;background:var(--s2);border:1px solid var(--bd);color:var(--sub)}
+.prog{margin:22px auto 0;max-width:420px;text-align:right}.prog div:first-child{display:flex;justify-content:space-between;font-size:12px;font-weight:500;color:var(--ac);margin-bottom:6px}
+.bar{height:6px;border-radius:9px;background:var(--s2);overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--ac);transition:width .2s}
+#work{flex:1;flex-direction:column;display:flex}
+.tb{position:sticky;top:var(--hh);z-index:20;height:var(--th);background:var(--s1);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;padding:0 clamp(10px,3vw,24px);overflow-x:auto;scrollbar-width:none}
+.tb::-webkit-scrollbar{display:none}.tb>*{flex:none}.tb .sp{flex:1 0 0}
+.seg{display:inline-flex;background:var(--s2);border:1px solid var(--bd);border-radius:99px;padding:2px}.seg button{border:0;background:none;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:500;color:var(--sub);display:inline-flex;align-items:center;gap:4px}.seg button.on{background:var(--bg);color:var(--tx)}
+.seg .v{font-size:11px;color:var(--sub);align-self:center;padding:0 4px;min-width:34px;text-align:center}
+.wave{display:none;gap:2px;align-items:center;height:18px}.wave.on{display:flex}.wave i{width:3px;height:4px;border-radius:2px;background:var(--ac);animation:sp .8s ease-in-out infinite}.wave i:nth-child(2){animation-delay:.2s}.wave i:nth-child(3){animation-delay:.4s}
+.split{flex:1;display:flex;align-items:flex-start}
+.canvas{flex:1;min-width:0;background:var(--cv);padding:20px clamp(8px,3vw,24px) 48px;align-self:stretch;transition:padding .2s}
+#pages{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%}
+.sheet{width:100%;max-width:820px;background:var(--sheet);border:1px solid var(--bd);border-radius:16px;padding:clamp(18px,5vw,56px);box-shadow:0 1px 3px rgba(0,0,0,.06);animation:rise .45s both;scroll-margin-top:calc(var(--hh) + var(--th) + 12px);overflow:hidden}
+.sheet.pending{min-height:420px}@media(min-width:900px){.sheet{min-height:700px}}
+.body{direction:ltr;text-align:left;font-family:var(--df);font-size:var(--fs);line-height:1.9;overflow-wrap:break-word}
+.body>*{margin:0 0 .9em}.body h1{font-size:1.5em;line-height:1.35}.body h2{font-size:1.22em;line-height:1.35}
+.body .li{padding-left:1.3em;position:relative}.body .li::before{content:'•';position:absolute;left:.3em;opacity:.6}
+.sf{margin-top:36px;padding-top:10px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;font-size:11px;color:var(--sub);direction:ltr;user-select:none}.sf b{font-family:Outfit,sans-serif}
+.wt{border-radius:4px;padding:0 2px;margin:0 -1px;cursor:pointer;transition:background .12s,color .12s}
+@media(hover:hover){.wt:hover{background:var(--hl);color:var(--ac)}}
+.wt.sh{background:var(--s2)}.wt.bm{border-bottom:1.5px solid var(--ok)}
+.wt.act{background:var(--acs);color:var(--onact);font-weight:600;outline:1px solid var(--ac);animation:pop .25s}
+body.sent-mode .wt:hover{background:transparent;color:inherit}
+.sent-span{border-radius:6px;transition:background .15s}
+body.sent-mode .sent-span{cursor:pointer;padding:1px 3px}
+@media(hover:hover){body.sent-mode .sent-span:hover{background:var(--hl)}}
+.sent-span.sent-act{background:var(--acs);color:var(--onact);outline:1px solid var(--ac)}
+
+/* Vocalized Arabic typography */
+.ar-vow{font-family:'Amiri','IBM Plex Sans Arabic',serif;letter-spacing:0;line-height:1.85!important}
+
+#panel{background:var(--s1);display:flex;flex-direction:column;z-index:40;position:fixed;inset:auto 0 0 0;max-height:62dvh;overflow-y:auto;overscroll-behavior:contain;border-radius:20px 20px 0 0;border-top:1px solid var(--bd);box-shadow:var(--sh);padding-bottom:env(safe-area-inset-bottom);animation:sheet .28s cubic-bezier(.2,.8,.2,1)}
+body.panel-open .canvas{padding-bottom:64dvh}
+@media(min-width:1024px){#panel{position:sticky;inset:auto;top:calc(var(--hh) + var(--th));width:410px;flex:none;height:calc(100dvh - var(--hh) - var(--th));max-height:none;border-radius:0;border-top:0;border-right:1px solid var(--bd);box-shadow:none;animation:slide .28s cubic-bezier(.2,.8,.2,1)}body.panel-open .canvas{padding-bottom:48px}}
+.ph{position:sticky;top:0;z-index:2;background:var(--s1);display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--bd);font-size:12px;font-weight:600}.ph b{display:flex;align-items:center;gap:6px;flex:1}.ph .ms{color:var(--ac)}
+.pc{padding:16px;display:grid;gap:12px;animation:rise .25s both}
+.card{background:var(--s2);border:1px solid var(--bd);border-radius:16px;padding:12px 14px}.card h3{margin:0 0 6px;font-size:12px}.card p{margin:0}
+.wh{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;padding-bottom:12px;border-bottom:1px solid var(--bd)}
+.wr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.wr h2{margin:0;font:600 24px Literata,serif;overflow-wrap:anywhere}
+.wm{display:flex;gap:8px;font-size:12px;color:var(--sub);margin-top:4px;flex-wrap:wrap}.wm span:first-child{font-family:monospace;color:var(--tx)}#pPos{color:var(--ok);font-weight:500}
+.lbl2{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:600;color:var(--ac);margin-bottom:4px}.lbl2.g{color:var(--sub)}
+.lbl2 button,.mini{background:none;border:0;font-size:11px;color:var(--ac);display:inline-flex;align-items:center;gap:2px;padding:2px 6px;border-radius:99px}.mini.g{color:var(--sub)}.mini.on{background:var(--acs)}
+#pTr{font-size:21px;font-weight:700}.sm2{font-size:11px;color:var(--sub);margin-top:4px!important}
+.ex{direction:ltr;font:12px/1.7 Literata,serif}.exa{font-size:13px;color:var(--sub);line-height:1.8}
+.lemma-box{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--bd);font-size:12px;flex-wrap:wrap}
+.lemma-word{font-family:Literata,serif;font-weight:600;color:var(--ac);direction:ltr;font-size:14px}
+.lemma-tr{color:var(--tx);font-weight:700;font-size:14px}
+.conj-trigger{width:100%;justify-content:center;border-color:var(--ac);color:var(--ac);background:var(--bg);font-weight:600;padding:9px 14px}
+.conj-trigger:hover{background:var(--acs)}
+
+/* Nature & Fonction Grammaticale Card */
+.gram-box{background:linear-gradient(135deg,var(--s2),var(--bg));border:1px solid var(--ac);border-radius:16px;padding:12px 14px;display:grid;gap:10px}
+.gram-head{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;color:var(--ac);border-bottom:1px solid var(--bd);padding-bottom:6px}
+.gram-grid{display:grid;grid-template-columns:1fr;gap:8px}
+.gram-item{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:8px 11px}
+.gram-lbl{font-size:10px;font-weight:700;color:var(--sub);display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.gram-lbl span:last-child{font-family:Literata,serif;direction:ltr;color:var(--ac);font-size:11px}
+.gram-val-orig{direction:ltr;text-align:left;font:600 13px Literata,serif;color:var(--tx)}
+.gram-val-ar{font-size:14px;font-weight:700;color:var(--ok);margin-top:2px}
+
+/* Side Drawer (Vocabulary & Conjugation) */
+.drawer{position:fixed;top:0;left:0;height:100dvh;width:min(100%,420px);background:var(--s1);border-right:1px solid var(--bd);transform:translateX(-102%);transition:transform .25s;z-index:60;display:flex;flex-direction:column;box-shadow:var(--sh)}.drawer.open{transform:none}
+.bdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:55}.bdrop.open{opacity:1;pointer-events:auto}
+.dh{height:var(--hh);display:flex;align-items:center;gap:6px;padding:0 12px;border-bottom:1px solid var(--bd);font-weight:600;font-size:14px}.dh .sp{flex:1}
+.dsr{padding:10px 12px;border-bottom:1px solid var(--bd)}.dsr input{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:99px;padding:7px 14px;font-size:13px;outline:0}.dsr input:focus{border-color:var(--ac)}
+#vlist,#conjBody{flex:1;overflow-y:auto;padding:12px;display:grid;gap:10px;align-content:start}
+.vitem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--bd);border-radius:16px;background:var(--s2);animation:rise .25s both}
+.vitem>div:first-child{min-width:0}.vw{display:flex;gap:6px;align-items:center;justify-content:flex-end}.vw b{font:600 14px Literata,serif;overflow:hidden;text-overflow:ellipsis}.vitem p{margin:2px 0 0;font-size:14px;color:var(--ac);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.none{padding:48px 0;text-align:center;font-size:12px;color:var(--sub)}
+
+/* Conjugation Table Styles */
+.conj-head-card{background:var(--s2);border:1px solid var(--bd);border-radius:16px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+.conj-tense{background:var(--s2);border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+.conj-tense-title{padding:9px 14px;background:var(--bg);border-bottom:1px solid var(--bd);font-size:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.conj-tense-title span:first-child{color:var(--ac)}
+.conj-tense-title span:last-child{font-family:Literata,serif;color:var(--sub);direction:ltr}
+.conj-row{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--bd);font-size:13px}
+.conj-row:last-child{border-bottom:0}
+.conj-form{direction:ltr;font-family:Literata,serif;font-weight:600;color:var(--tx)}
+
+/* Flashcards Modal */
+.fc-wrap{display:grid;gap:14px}
+.fc-top{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--sub)}
+.fc-prog{height:5px;border-radius:99px;background:var(--s2);overflow:hidden}.fc-prog i{display:block;height:100%;background:var(--ac);transition:width .25s}
+.fc-scene{perspective:1000px;height:250px;cursor:pointer;user-select:none}
+.fc-card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+.fc-card.flipped{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;background:var(--s2);border:1px solid var(--bd);border-radius:22px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.fc-back{transform:rotateY(180deg);background:var(--bg);border-color:var(--ac)}
+.fc-word{font:700 30px Literata,serif;color:var(--tx);direction:ltr}
+.fc-ipa{font-family:monospace;font-size:13px;color:var(--sub);direction:ltr}
+.fc-tr{font-size:24px;font-weight:700;color:var(--ac)}
+.fc-ex{font-size:12px;color:var(--sub);max-width:92%;line-height:1.7}
+.fc-hint{position:absolute;bottom:12px;font-size:11px;color:var(--sub);display:flex;align-items:center;gap:4px}
+.fc-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+
+.sk{border-radius:12px;background:linear-gradient(90deg,var(--s2) 25%,var(--bd) 50%,var(--s2) 75%);background-size:600px 100%;animation:shim 1.2s linear infinite}
+.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.55);display:grid;place-items:center;padding:16px;animation:fade .2s}
+.mbox{background:var(--s1);border:1px solid var(--bd);border-radius:24px;width:100%;max-width:460px;max-height:calc(100dvh - 32px);overflow:auto;box-shadow:var(--sh);animation:modal .22s ease-out}.mbox.w{max-width:560px}
+.mh{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:14px}.mb{padding:18px;font-size:12px;color:var(--sub);line-height:1.8;display:grid;gap:10px}.mf{padding:12px 18px;background:var(--s2);border-top:1px solid var(--bd);display:flex;gap:8px;align-items:center;justify-content:flex-end}
+.mbox textarea,.mbox input[type=password]{width:100%;border-radius:14px;background:var(--s2);border:1px solid var(--bd);padding:12px;font-size:14px;outline:0}.mbox textarea{font-family:Literata,serif;resize:vertical}
+.feat{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:16px;background:var(--s2);border:1px solid var(--bd);text-align:right}.feat .ms{color:var(--ac);background:var(--acs);border-radius:10px;padding:5px;box-sizing:content-box}.feat b{display:block;color:var(--tx);font-size:12px}.feat small{font-size:11px}
+.toast{position:fixed;top:calc(var(--hh) + 10px);left:50%;transform:translate(-50%,-16px);opacity:0;pointer-events:none;transition:.25s;background:#1f1f1f;color:#fff;font-size:12px;font-weight:500;padding:9px 18px;border-radius:99px;box-shadow:var(--sh);z-index:80;max-width:90vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}html.dark .toast{background:#e3e3e3;color:#131314}
+body.drag::after{content:'أفلت الملف هنا';position:fixed;inset:12px;border:2px dashed var(--ac);border-radius:24px;background:rgba(26,115,232,.08);display:grid;place-items:center;z-index:90;pointer-events:none;font-weight:700;color:var(--ac)}
+@keyframes pulse{50%{transform:scale(1.14)}}@keyframes float{50%{transform:translateY(-6px)}}@keyframes drift{to{transform:translate(6%,4%) rotate(8deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}@keyframes fade{from{opacity:0}}@keyframes pop{50%{transform:scale(1.06)}}
+@keyframes modal{from{opacity:0;transform:translateY(10px) scale(.98)}}@keyframes sheet{from{transform:translateY(100%)}}@keyframes slide{from{opacity:0;transform:translateX(-24px)}}
+@keyframes sp{50%{height:14px}}@keyframes shim{to{background-position:600px 0}}
+@media(max-width:640px){.lbl,.hide-sm{display:none}.btn.pri{padding:8px 10px}input,textarea{font-size:16px!important}}
+@media(max-width:520px){.brand span{display:none}.hdr{gap:6px}}
+@media(prefers-reduced-motion:reduce){*,::before{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<input id="fileInput" type="file" accept=".pdf,.docx,.txt,image/png,image/jpeg,image/webp" hidden>
+
+<header class="hdr">
+  <button class="brand" onclick="goHome()" aria-label="Readdy — الرئيسية">
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M10 18C10 15.8 11.8 14 14 14H30V50H14C11.8 50 10 48.2 10 46V18Z" fill="#1A73E8"/><path d="M34 14H50C52.2 14 54 15.8 54 18V46C54 48.2 52.2 50 50 50H34V14Z" fill="#8AB4F8"/><path d="M30 14H34V50H30V14Z" fill="#D3E3FD"/><rect x="15" y="22" width="10" height="2.6" rx="1.3" fill="#fff"/><rect x="15" y="28.5" width="10" height="2.6" rx="1.3" fill="#fff"/><rect x="15" y="35" width="7" height="2.6" rx="1.3" fill="#fff"/><path class="play" d="M40 25.5L48.5 32L40 38.5V25.5Z" fill="#041E49"/></svg>
+    <span dir="ltr">Readdy</span>
+  </button>
+  <input id="docTitleInput" dir="ltr" type="text" aria-label="عنوان المستند">
+  <div class="sp"></div>
+  <label class="pill" title="لغة المستند"><i class="ms hide-sm" style="font-size:16px">language</i>
+    <select id="langSel" onchange="setLang(this.value)"><option value="auto">Auto</option><option value="en">English</option><option value="fr">Français</option></select></label>
+  <button class="btn pri" onclick="$('fileInput').click()" aria-label="رفع ملف"><i class="ms">upload_file</i><span class="lbl">رفع ملف</span></button>
+  <button class="ibtn" onclick="toggleTheme()" aria-label="تبديل الوضع"><i id="themeIcon" class="ms">dark_mode</i></button>
+  <button class="ibtn hide-sm" onclick="openWelcome(true)" aria-label="دليل المنصة"><i class="ms">info</i></button>
+  <button class="ibtn" onclick="show('apiModal',1)" aria-label="إعدادات الترجمة"><i class="ms">tune</i></button>
+  <button class="ibtn" onclick="drawer(1)" aria-label="الكلمات المحفوظة"><i class="ms">bookmarks</i><b id="badge" class="badge" hidden>0</b></button>
+</header>
+
+<main id="empty">
+  <div class="hero">
+    <div class="chips" aria-hidden="true"><span style="--d:0s">Bonjour</span><span style="--d:.5s">Hello</span><span style="--d:1s">Lecture</span><span style="--d:1.5s">Words</span></div>
+    <div class="big"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M10 18C10 15.8 11.8 14 14 14H30V50H14C11.8 50 10 48.2 10 46V18Z" fill="#1A73E8"/><path d="M34 14H50C52.2 14 54 15.8 54 18V46C54 48.2 52.2 50 50 50H34V14Z" fill="#8AB4F8"/><path d="M30 14H34V50H30V14Z" fill="#D3E3FD"/><rect x="15" y="22" width="10" height="2.6" rx="1.3" fill="#fff"/><rect x="15" y="28.5" width="10" height="2.6" rx="1.3" fill="#fff"/><rect x="15" y="35" width="7" height="2.6" rx="1.3" fill="#fff"/><path class="play" d="M40 25.5L48.5 32L40 38.5V25.5Z" fill="#041E49"/></svg><span dir="ltr">Readdy</span></div>
+    <div><h1>اقرأ المستندات الإنجليزية والفرنسية بذكاء</h1><p>ارفع ملف PDF أو مستند Word أو صورة نصية، وانقر على أي كلمة أو جملة كاملة للحصول على ترجمتها المشكولة بالعربية وتحليل طبيعتها ووظيفتها النحوية (Nature &amp; Fonction) ونطقها الصوتي.</p></div>
+    <div class="row">
+      <button class="btn pri lg" onclick="$('fileInput').click()"><i class="ms">folder_open</i>اختيار ملف من الجهاز</button>
+      <button class="btn lg" onclick="show('pasteModal',1)"><i class="ms">content_paste</i>لصق نص مباشرة</button>
+    </div>
+    <div>
+      <div class="row fmts"><span>PDF</span><span>DOCX</span><span>TXT</span><span>OCR صور</span></div>
+      <div id="prog" class="prog" hidden><div><span id="pgText"></span><span id="pgPct">0%</span></div><div class="bar"><i id="pgBar"></i></div></div>
+    </div>
+  </div>
+</main>
+
+<section id="work" hidden>
+  <div class="tb">
+    <button id="playBtn" class="btn pri" onclick="toggleDocAudio()"><i id="playIcon" class="ms fill">play_arrow</i><span id="playLbl">استماع للمستند</span></button>
+    <button id="stopBtn" class="ibtn sm" onclick="Speech.stop()" aria-label="إيقاف" hidden><i class="ms">stop</i></button>
+    <div class="seg" title="وضع التحديد في النص">
+      <button id="modeWord" class="on" onclick="setSelectMode('word')"><i class="ms" style="font-size:15px">ads_click</i>كلمة</button>
+      <button id="modeSent" onclick="setSelectMode('sentence')"><i class="ms" style="font-size:15px">segment</i>جملة كاملة</button>
+    </div>
+    <label class="pill"><span class="k">السرعة:</span><select onchange="Speech.setRate(parseFloat(this.value))"><option>0.7</option><option>0.85</option><option selected>1</option><option>1.25</option><option>1.5</option></select></label>
+    <label class="pill hide-sm"><i class="ms k" style="font-size:15px">record_voice_over</i><select id="voiceSel" dir="ltr" onchange="Speech.uri=this.value"></select></label>
+    <div id="wave" class="wave" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="sp"></div>
+    <div class="seg"><button id="fSerif" class="on" onclick="setFont('serif')">Literata</button><button id="fSans" onclick="setFont('sans')">Inter</button></div>
+    <div class="seg"><button onclick="setSize(-1)" aria-label="تصغير">A-</button><span id="fSize" class="v">18px</span><button onclick="setSize(1)" aria-label="تكبير">A+</button></div>
+    <label class="pill hide-sm"><span class="k">صفحة</span><input id="jump" type="number" min="1" value="1" onchange="jumpPage(this.value)"><span id="pgCount" class="k">/ 1</span></label>
+    <button class="btn" onclick="goHome()"><i class="ms" style="font-size:16px">add</i>جديد</button>
+  </div>
+  <div class="split">
+    <div class="canvas"><div id="pages"></div></div>
+    <aside id="panel" hidden aria-live="polite">
+      <div class="ph"><b><i class="ms">translate</i><span id="panelHeadTitle">الترجمة والتحليل النحوي</span></b><span id="engineTag" class="tag"></span><button class="ibtn sm" onclick="closePanel()" aria-label="إغلاق"><i class="ms">close</i></button></div>
+      <div id="skel" class="pc" hidden><div class="sk" style="height:46px"></div><div class="sk" style="height:96px"></div><div class="sk" style="height:80px"></div><div class="sk" style="height:96px"></div></div>
+      <div id="pContent" class="pc" hidden>
+        <!-- Word Header -->
+        <div id="wordHeaderBox" class="wh">
+          <div dir="ltr"><div class="wr"><h2 id="pTitle"></h2><span id="pLang" class="tag"></span></div><div class="wm"><span id="pIpa"></span><span id="pDot">•</span><span id="pPos"></span></div></div>
+          <button id="bmBtn" class="ibtn" onclick="toggleBookmark()" aria-label="حفظ الكلمة"><i id="bmIcon" class="ms">bookmark_add</i></button>
+        </div>
+        <!-- Word Audio Controls -->
+        <div id="wordAudioBox" class="card row" style="flex-wrap:nowrap;gap:6px;padding:8px">
+          <button class="btn" style="flex:1;justify-content:center;color:var(--ac)" onclick="sayWord(1)"><i class="ms fill" style="font-size:17px">volume_up</i>نطق</button>
+          <button class="btn" style="flex:1;justify-content:center" onclick="sayWord(.65)"><i class="ms" style="font-size:17px">slow_motion_video</i>بطيء</button>
+          <button id="wRepeat" class="ibtn" style="border-radius:12px" onclick="loopWord()" aria-label="تكرار"><i class="ms" style="font-size:18px">repeat</i></button>
+        </div>
+
+        <!-- Always-Visible Nature & Fonction Grammaticale Card -->
+        <div id="gramAnalysisBox" class="gram-box">
+          <div class="gram-head">
+            <span>التَّحْلِيلُ النَّحْوِيُّ (Nature &amp; Fonction)</span>
+            <span id="gramLangBadge" dir="ltr">FR / EN</span>
+          </div>
+          <div class="gram-grid">
+            <div class="gram-item">
+              <div class="gram-lbl">
+                <span>طَبِيعَةُ الكَلِمَةِ (الأَقْسَامُ النَّحْوِيَّةُ)</span>
+                <span id="natureLblOrig">Nature grammaticale</span>
+              </div>
+              <div id="pNatureOrig" class="gram-val-orig"></div>
+              <div id="pNatureAr" class="gram-val-ar ar-vow"></div>
+            </div>
+            <div class="gram-item">
+              <div class="gram-lbl">
+                <span>الوَظِيفَةُ النَّحْوِيَّةُ فِي الجُمْلَةِ</span>
+                <span id="fonctionLblOrig">Fonction grammaticale</span>
+              </div>
+              <div id="pFonctionOrig" class="gram-val-orig"></div>
+              <div id="pFonctionAr" class="gram-val-ar ar-vow"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contextual Translation (Vocalized Arabic + Arabic Speech + Lemma) -->
+        <div id="wordTrBox" class="card">
+          <div class="lbl2">
+            <span>التَّرْجَمَةُ السِّيَاقِيَّةُ المَشْكُولَةُ</span>
+            <span>
+              <button onclick="sayArabicTr()" title="نطق الترجمة العربية"><i class="ms fill" style="font-size:15px">record_voice_over</i>نطق</button>
+              <button onclick="copyTr()"><i class="ms" style="font-size:14px">content_copy</i>نسخ</button>
+            </span>
+          </div>
+          <p id="pTr" class="ar-vow"></p>
+          <div id="lemmaSection" class="lemma-box">
+            <div><span style="color:var(--sub)">مَصْدَرُ الكَلِمَةِ: </span><span id="pLemmaWord" class="lemma-word"></span></div>
+            <div style="text-align:left;display:flex;align-items:center;gap:4px">
+              <span style="color:var(--sub)">القِيَاسِيَّةُ: </span>
+              <span id="pLemmaTr" class="lemma-tr ar-vow"></span>
+              <button class="ibtn sm" style="width:24px;height:24px;border:0;background:none;color:var(--ac)" onclick="sayArabicLemma()" aria-label="نطق الترجمة القياسية"><i class="ms" style="font-size:15px">volume_up</i></button>
+            </div>
+          </div>
+        </div>
+        <!-- Conjugation Drawer Trigger -->
+        <div id="conjBtnWrap">
+          <button class="btn conj-trigger" onclick="openConjugationDrawer()"><i class="ms">table_chart</i>تصريف الفعل في جميع الأزمنة (قائمة جانبية)</button>
+        </div>
+        <!-- Explanation -->
+        <div id="wordExpBox" class="card"><h3>المَعْنَى وَالشَّرْحُ</h3><p id="pExp" class="ar-vow" style="font-size:14px"></p></div>
+        <!-- Example -->
+        <div id="exBox" class="card"><div class="lbl2 g"><span>مِثَالٌ تَطْبِيقِيٌّ</span><span><button class="mini" onclick="sayEx(1)"><i class="ms" style="font-size:14px">volume_up</i>1x</button><button class="mini g" onclick="sayEx(.65)">0.65x</button><button class="mini" onclick="sayArabicEx()" title="نطق المثال بالعربية"><i class="ms" style="font-size:14px">record_voice_over</i>عربي</button></span></div><p id="pExO" class="ex"></p><p id="pExA" class="exa ar-vow"></p></div>
+        <!-- Full Sentence Card -->
+        <div id="sentSectionBox" style="border-top:1px solid var(--bd);padding-top:12px;display:grid;gap:8px">
+          <div class="lbl2 g"><span id="sentBoxLabel">الجُمْلَةُ الكَامِلَةُ فِي النَّصِّ</span><span><button class="mini" onclick="saySent(1)"><i class="ms" style="font-size:15px">volume_up</i>1x</button><button class="mini g" onclick="saySent(.65)">0.65x</button><button id="sRepeat" class="mini g" onclick="loopSent()" aria-label="تكرار الجملة"><i class="ms" style="font-size:15px">repeat</i></button><button class="mini" onclick="sayArabicSent()" title="نطق الترجمة العربية"><i class="ms fill" style="font-size:15px">record_voice_over</i>عربي</button><button class="mini" onclick="copySent()"><i class="ms" style="font-size:14px">content_copy</i>نسخ</button></span></div>
+          <p id="pSO" class="card ex" style="padding:12px 14px;font-size:14px"></p>
+          <p id="pSA" class="card ar-vow" style="padding:12px 14px;font-size:16px;font-weight:700;color:var(--tx)"></p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<div id="bdrop" class="bdrop" onclick="closeAllDrawers()"></div>
+
+<!-- Saved Vocabulary Side Drawer -->
+<aside id="drawer" class="drawer" inert aria-label="الكلمات المحفوظة">
+  <div class="dh"><i class="ms" style="color:var(--ac)">bookmarks</i><span>الكلمات المحفوظة</span><span id="vCount" class="tag">0</span><span class="sp"></span>
+    <button class="btn pri" style="padding:5px 11px" onclick="openFlashcards()"><i class="ms" style="font-size:16px">style</i>فلاش كاردز</button>
+    <button class="btn" style="color:var(--ac);padding:5px 10px" onclick="exportCSV()"><i class="ms" style="font-size:16px">download</i>CSV</button>
+    <button class="ibtn sm" onclick="drawer(0)" aria-label="إغلاق"><i class="ms">close</i></button></div>
+  <div class="dsr"><input id="vsearch" type="search" placeholder="بحث في المفردات..." oninput="renderVocab()"></div>
+  <div id="vlist"></div>
+</aside>
+
+<!-- Conjugation Side Drawer -->
+<aside id="conjDrawer" class="drawer" inert aria-label="تصريف الفعل في جميع الأزمنة">
+  <div class="dh"><i class="ms" style="color:var(--ac)">table_chart</i><span>تصريف الفعل في جميع الأزمنة</span><span id="conjLangTag" class="tag"></span><span class="sp"></span>
+    <button class="ibtn sm" onclick="closeConjDrawer()" aria-label="إغلاق"><i class="ms">close</i></button></div>
+  <div id="conjBody"></div>
+</aside>
+
+<!-- Flashcards Modal -->
+<div id="fcModal" class="modal" hidden><div class="mbox w">
+  <div class="mh"><span style="display:flex;align-items:center;gap:6px"><i class="ms" style="color:var(--ac)">style</i>بطاقات المراجعة الذكية (Flashcards)</span><button class="ibtn sm" onclick="show('fcModal',0)" aria-label="إغلاق"><i class="ms">close</i></button></div>
+  <div class="mb">
+    <div class="fc-wrap">
+      <div class="fc-top">
+        <span id="fcCounter">بطاقة 1 من 1</span>
+        <div style="display:flex;gap:6px">
+          <button class="mini" onclick="fcShuffle()"><i class="ms" style="font-size:15px">shuffle</i>خلط</button>
+          <button id="fcDirBtn" class="mini" onclick="fcToggleDir()"><i class="ms" style="font-size:15px">swap_horiz</i>عكس الوجه</button>
+        </div>
+      </div>
+      <div class="fc-prog"><i id="fcBar" style="width:0%"></i></div>
+      <div class="fc-scene" onclick="fcFlip()">
+        <div id="fcCard" class="fc-card">
+          <div class="fc-face fc-front">
+            <span id="fcFrontTag" class="tag">EN</span>
+            <div id="fcFrontMain" class="fc-word"></div>
+            <div id="fcFrontSub" class="fc-ipa"></div>
+            <button class="btn" style="margin-top:4px;color:var(--ac)" onclick="event.stopPropagation();fcSpeakFront()"><i class="ms fill" style="font-size:17px">volume_up</i>استماع</button>
+            <div class="fc-hint"><i class="ms" style="font-size:14px">touch_app</i>انقر لقلب البطاقة</div>
+          </div>
+          <div class="fc-face fc-back">
+            <span id="fcBackTag" class="tag">المعنى المشكول</span>
+            <div id="fcBackMain" class="fc-tr ar-vow"></div>
+            <div id="fcBackSub" class="fc-ex ar-vow"></div>
+            <button class="btn" style="margin-top:4px;color:var(--ac)" onclick="event.stopPropagation();fcSpeakBack()"><i class="ms fill" style="font-size:17px">record_voice_over</i>نطق المعنى</button>
+            <div class="fc-hint"><i class="ms" style="font-size:14px">touch_app</i>انقر للعودة</div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-actions">
+        <button class="btn" onclick="fcNav(-1)"><i class="ms" style="font-size:16px">arrow_forward</i>السابق</button>
+        <button class="btn" style="color:var(--ok);border-color:var(--ok)" onclick="fcMarkKnown()"><i class="ms" style="font-size:16px">check_circle</i>أتقنتها</button>
+        <button class="btn pri" onclick="fcNav(1)">التالي<i class="ms" style="font-size:16px">arrow_back</i></button>
+      </div>
+    </div>
+  </div></div></div>
+
+<div id="welcomeModal" class="modal" hidden><div class="mbox">
+  <div class="mh"><span>منصة القراءة الذكية • Readdy</span><button class="ibtn sm" onclick="closeWelcome()" aria-label="إغلاق"><i class="ms">close</i></button></div>
+  <div class="mb">
+    <div class="feat"><i class="ms">account_tree</i><div><b>التحليل النحوي الدائم (Nature &amp; Fonction)</b><small>تحديد طبيعة كل كلمة ووظيفتها الإعرابية داخل الجملة بالفرنسية والإنجليزية والعربية.</small></div></div>
+    <div class="feat"><i class="ms">spellcheck</i><div><b>ترجمة عربية مشكولة وقابلة للنطق</b><small>تشكيل تلقائي للنصوص العربية مع إمكانية الاستماع للنطق العربي والأجنبي.</small></div></div>
+    <div class="feat"><i class="ms">style</i><div><b>بطاقات مراجعة وتصريف الأفعال</b><small>راجع كلماتك المحفوظة بنظام البطاقات التفاعلية مع جدول تصريف الأفعال.</small></div></div>
+    <button class="btn pri lg" style="justify-content:center" onclick="closeWelcome()">الدخول إلى مساحة القراءة</button>
+    <label style="display:flex;gap:8px;justify-content:center;align-items:center;cursor:pointer"><input id="noWelcome" type="checkbox">عدم إظهار هذه البطاقة مجدداً</label>
+  </div></div></div>
+
+<div id="pasteModal" class="modal" hidden><div class="mbox w">
+  <div class="mh"><span>لصق نص للقراءة</span><button class="ibtn sm" onclick="show('pasteModal',0)" aria-label="إغلاق"><i class="ms">close</i></button></div>
+  <div class="mb"><textarea id="pasteInput" dir="auto" rows="8" placeholder="الصق النص الإنجليزي أو الفرنسي هنا..."></textarea></div>
+  <div class="mf"><button class="btn" onclick="show('pasteModal',0)">إلغاء</button><button class="btn pri" onclick="readPasted()">فتح للقراءة</button></div></div></div>
+
+<div id="apiModal" class="modal" hidden><div class="mbox">
+  <div class="mh"><span>إعدادات محرك الترجمة</span><button class="ibtn sm" onclick="show('apiModal',0)" aria-label="إغلاق"><i class="ms">close</i></button></div>
+  <div class="mb"><b style="color:var(--tx)">يعمل التطبيق بالتحليل النحوي (Nature &amp; Fonction) + التشكيل العربي + 3 محركات ترجمة مجانية.</b><span>اختياري: لتفعيل التحليل النحوي العميق عبر <b>Gemini AI</b> أدخل مفتاح API:</span><input id="gemKey" type="password" dir="ltr" placeholder="AIzaSy..." autocomplete="off"></div>
+  <div class="mf" style="justify-content:space-between"><button class="btn" style="color:#d93025" onclick="clearCache()">مسح ذاكرة الترجمة</button><span style="display:flex;gap:8px"><button class="btn" onclick="show('apiModal',0)">إغلاق</button><button class="btn pri" onclick="saveKey()">حفظ</button></span></div></div></div>
+
+<div id="toast" class="toast" role="status"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const K={vocab:'readdy_saved_vocabulary_prod_v6',cache:'readdy_ai_cache_prod_v8',gem:'readdy_user_gemini_api_key',wel:'readdy_hide_welcome_modal_saj_v1',theme:'readdy_theme_mode_v1'};
+const store={get(k,d=null){try{const v=localStorage.getItem(k);return v===null?d:v}catch{return d}},set(k,v){try{localStorage.setItem(k,v)}catch{}},del(k){try{localStorage.removeItem(k)}catch{}}};
+const S={title:'',pages:[],recs:[],override:'auto',lang:'en',size:18,selectMode:'word',activeEl:null,activeSentEl:null,toks:[],selIdx:-1,sel:null,req:0,cache:new Map(),conjCache:new Map(),saved:[],gem:store.get(K.gem,''),io:null};
+try{
+  const v=JSON.parse(store.get(K.vocab,'[]'));
+  if(Array.isArray(v))S.saved=v;
+  const cObj=JSON.parse(store.get(K.cache,'{}'));
+  if(cObj&&typeof cObj==='object')Object.entries(cObj).forEach(([k,val])=>S.cache.set(k,val));
+}catch(e){
+  store.del(K.vocab);
+  store.del(K.cache);
+}
+
+/* ---------- Arabic Diacritization (Tashkeel) Engine ---------- */
+const AR_DIAC_MAP={
+  'ال':'الْ','في':'فِي','من':'مِنْ','إلى':'إِلَى','على':'عَلَى','عن':'عَنْ','مع':'مَعَ','بين':'بَيْنَ','تحت':'تَحْتَ','فوق':'فَوْقَ',
+  'بعد':'بَعْدَ','قبل':'قَبْلَ','نحو':'نَحْوَ','عند':'عِنْدَ','لدى':'لَدَى','بدون':'بِدُونِ','بلا':'بِلَا','عبر':'عَبْرَ','بواسطة':'بِوَاسِطَةِ',
+  'هذا':'هَذَا','هذه':'هَذِهِ','ذلك':'ذَلِكَ','تلك':'تِلْكَ','هؤلاء':'هَؤُلَاءِ','أولئك':'أُولَئِكَ','الذي':'الَّذِي','التي':'الَّتِي','الذين':'الَّذِينَ',
+  'أنا':'أَنَا','أنت':'أَنْتَ','هو':'هُوَ','هي':'هِيَ','نحن':'نَحْنُ','أنتم':'أَنْتُمْ','هم':'هُمْ','هن':'هُنَّ',
+  'أو':'أَوْ','لكن':'لَكِنْ','لأن':'لِأَنَّ','إذن':'إِذَنْ','وبالتالي':'وَبِالتَّالِي','ليس':'لَيْسَ','لا':'لَا','لم':'لَمْ','لن':'لَنْ','قد':'قَدْ',
+  'كان':'كَانَ','كانت':'كَانَتْ','كانوا':'كَانُوا','يكون':'يَكُونُ','تكون':'تَكُونُ','يكونون':'يَكُونُونَ','أكون':'أَكُونُ',
+  'يملك':'يَمْلِكُ','لديه':'لَدَيْهِ','لديهم':'لَدَيْهِمْ','يفعل':'يَفْعَلُ','فعل':'فَعَلَ','يذهب':'يَذْهَبُ','ذهب':'ذَهَبَ','يستطيع':'يَسْتَطِيعُ',
+  'يجب':'يَجِبُ','يريد':'يُرِيدُ','رأى':'رَأَى','يرى':'يَرَى','أخذ':'أَخَذَ','يأخذ':'يَأْخُذُ','صنع':'صَنَعَ','قال':'قَالَ','يقول':'يَقُولُ',
+  'جاء':'جَاءَ','يأتي':'يَأْتِي','عرف':'عَرَفَ','يعرف':'يَعْرِفُ','فكر':'فَكَّرَ','كتب':'كَتَبَ','يكتب':'يَكْتُبُ','قرأ':'قَرَأَ','يقرأ':'يَقْرَأُ',
+  'تكلم':'تَكَلَّمَ','يتكلم':'يَتَكَلَّمُ','أعطى':'أَعْطَى','وجد':'وَجَدَ','يجد':'يَجِدُ','شعر':'شَعَرَ','ترك':'تَرَكَ','بدأ':'بَدَأَ','يبدأ':'يَبْدَأُ',
+  'كتاب':'كِتَابٌ','علم':'عِلْمٌ','معرفة':'مَعْرِفَةٌ','لغة':'لُغَةٌ','كلمة':'كَلِمَةٌ','جملة':'جُمْلَةٌ','نص':'نَصٌّ','قراءة':'قِرَاءَةٌ',
+  'حياة':'حَيَاةٌ','وقت':'وَقْتٌ','يوم':'يَوْمٌ','سنة':'سَنَةٌ','عالم':'عَالَمٌ','إنسان':'إِنْسَانٌ','رجل':'رَجُلٌ','امرأة':'امْرَأَةٌ','طفل':'طِفْلٌ',
+  'بيت':'بَيْتٌ','عمل':'عَمَلٌ','فكرة':'فِكْرَةٌ','حقيقة':'حَقِيقَةٌ','سؤال':'سُؤَالٌ','جواب':'جَوَابٌ','طريق':'طَرِيقٌ','شيء':'شَيْءٌ',
+  'جديد':'جَدِيدٌ','قديم':'قَدِيمٌ','كبير':'كَبِيرٌ','صغير':'صَغِيرٌ','جميل':'جَمِيلٌ','سريع':'سَرِيعٌ','بطيء':'بَطِيءٌ','صحيح':'صَحِيحٌ',
+  'مهم':'مُهِمٌّ','مختلف':'مُخْتَلِفٌ','ممكن':'مُمْكِنٌ','ضروري':'ضَرُورِيٌّ','خاص':'خَاصٌّ','عام':'عَامٌّ','أول':'أَوَّلُ','آخر':'آخِرُ',
+  'جدا':'جِدًّا','دائما':'دَائِمًا','أحيانا':'أَحْيَانًا','أبدا':'أَبَدًا','هنا':'هُنَا','هناك':'هُنَاكَ','الآن':'الْآنَ','اليوم':'الْيَوْمَ'
+};
+const hasTashkeel=s=>/[\u064B-\u065F\u0670]/.test(s);
+function vocalizeArabic(text){
+  if(!text)return'';
+  if(hasTashkeel(text))return text;
+  return text.split(/(\s+|[،؛؟!."«»()\-—:/])/).map(tok=>{
+    if(!/[\u0621-\u064A]/.test(tok))return tok;
+    const cleanTok=tok.replace(/[^\u0621-\u064A]/g,'');
+    if(AR_DIAC_MAP[cleanTok])return AR_DIAC_MAP[cleanTok];
+    let w=tok,prefix='';
+    if(w.startsWith('و')&&w.length>3){prefix+='وَ';w=w.slice(1)}
+    else if(w.startsWith('ف')&&w.length>3&&!w.startsWith('في')){prefix+='فَ';w=w.slice(1)}
+    else if(w.startsWith('ب')&&w.length>3&&!w.startsWith('بي')&&!w.startsWith('بع')){prefix+='بِ';w=w.slice(1)}
+    else if(w.startsWith('ل')&&w.length>3&&!w.startsWith('لا')&&!w.startsWith('لم')&&!w.startsWith('لن')){prefix+='لِ';w=w.slice(1)}
+    if(AR_DIAC_MAP[w])return prefix+AR_DIAC_MAP[w];
+    if(w.startsWith('ال')&&w.length>4){
+      const stem=w.slice(2);
+      const sun=/^[تثدذرزسشصضطظلن]/.test(stem);
+      const vStem=AR_DIAC_MAP[stem]?AR_DIAC_MAP[stem].replace(/[\u064B\u064C\u064D]$/,'\u064F'):morphVocalize(stem,true);
+      return prefix+(sun?'ال'+vStem[0]+'ّ'+vStem.slice(1):'الْ'+vStem);
+    }
+    return prefix+morphVocalize(w,false);
+  }).join('');
+}
+function morphVocalize(w,definite){
+  if(w.length<=2)return w;
+  if(/^مُ?سْتَ/.test(w)&&w.length>=6)return'مُسْتَ'+w.slice(3);
+  if(w.startsWith('تَ')||(/^ت[\u0621-\u064A]{2}ي[\u0621-\u064A]$/.test(w)))return'تَ'+w[1]+'ْ'+w[2]+'ِي'+w[4]+(definite?'ُ':'ٌ');
+  if(/^م[\u0621-\u064A]{2}و[\u0621-\u064A]$/.test(w))return'مَ'+w[1]+'ْ'+w[2]+'ُو'+w[4]+(definite?'ُ':'ٌ');
+  if(/^[\u0621-\u064A]ا[\u0621-\u064A]{2}$/.test(w))return w[0]+'َا'+w[2]+'ِ'+w[3]+(definite?'ُ':'ٌ');
+  if(w.endsWith('ة')&&w.length>=4)return w.slice(0,-1)+'َة'+(definite?'ُ':'ٌ');
+  if(w.endsWith('ات')&&w.length>=5)return w.slice(0,-2)+'َات'+(definite?'ُ':'ٌ');
+  if(w.endsWith('ون')&&w.length>=5)return w.slice(0,-2)+'ُونَ';
+  if(w.endsWith('ين')&&w.length>=5)return w.slice(0,-2)+'ِينَ';
+  if(w.startsWith('ي')&&w.length===4)return'يَ'+w[1]+'ْ'+w[2]+'ُ'+w[3]+'ُ';
+  if(w.startsWith('ت')&&w.length===4)return'تَ'+w[1]+'ْ'+w[2]+'ُ'+w[3]+'ُ';
+  return w;
+}
+async function fetchVocalizedArabic(text){
+  if(!text||hasTashkeel(text))return text;
+  try{
+    const d=await jfetch(`https://tahseel.app/api/diacritize?text=${encodeURIComponent(text.slice(0,500))}`,2200);
+    if(d&&d.result&&hasTashkeel(d.result))return d.result;
+  }catch{}
+  return vocalizeArabic(text);
+}
+
+/* ---------- Built-in Lexicon with Nature & Fonction ---------- */
+const LEX={fr:{},en:{}};
+const load=(l,t)=>t.trim().split('\n').forEach(r=>{
+  const[w,tr,pos,lem,natOrig,natAr,fnOrig,fnAr]=r.split('|');
+  LEX[l][w]={tr,pos,lemma:lem||w,nature_orig:natOrig||'',nature_ar:natAr||pos,fonction_orig:fnOrig||'',fonction_ar:fnAr||''};
+});
+load('fr',`mon|ـي / خَاصَّتِي (مُذَكَّر مُفْرَد)|صِفَةُ مِلْكِيَّةٍ|mon|Déterminant possessif (masculin singulier)|مُحَدِّدُ مِلْكِيَّةٍ (مُذَكَّرٌ مُفْرَدٌ)|Détermine le nom qui suit|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ وَيُبَيِّنُ مِلْكِيَّتَهُ
+ma|ـي (مُؤَنَّث مُفْرَد)|صِفَةُ مِلْكِيَّةٍ|mon|Déterminant possessif (féminin singulier)|مُحَدِّدُ مِلْكِيَّةٍ (مُؤَنَّثٌ مُفْرَدٌ)|Détermine le nom qui suit|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ وَيُبَيِّنُ مِلْكِيَّتَهُ
+mes|ـي (جَمْع)|صِفَةُ مِلْكِيَّةٍ|mon|Déterminant possessif (pluriel)|مُحَدِّدُ مِلْكِيَّةٍ (جَمْعٌ)|Détermine le nom pluriel qui suit|يُحَدِّدُ الِاسْمَ الجَمْعَ الَّذِي يَلِيهِ
+ton|ـكَ (مُذَكَّر مُفْرَد)|صِفَةُ مِلْكِيَّةٍ|ton|Déterminant possessif (2e pers. sg.)|مُحَدِّدُ مِلْكِيَّةٍ (لِلْمُخَاطَبِ)|Détermine le nom qui suit|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ
+ta|ـكِ (مُؤَنَّث مُفْرَد)|صِفَةُ مِلْكِيَّةٍ|ton|Déterminant possessif (féminin sg.)|مُحَدِّدُ مِلْكِيَّةٍ (مُؤَنَّثٌ مُفْرَدٌ)|Détermine le nom qui suit|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ
+tes|ـكَ (جَمْع)|صِفَةُ مِلْكِيَّةٍ|ton|Déterminant possessif (pluriel)|مُحَدِّدُ مِلْكِيَّةٍ (جَمْعٌ)|Détermine le nom pluriel|يُحَدِّدُ الِاسْمَ الجَمْعَ
+son|ـهُ / ـهَا (مُذَكَّر مُفْرَد)|صِفَةُ مِلْكِيَّةٍ|son|Déterminant possessif (3e pers. sg.)|مُحَدِّدُ مِلْكِيَّةٍ (لِلْغَائِبِ)|Détermine le nom qui suit|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ
+sa|ـهُ / ـهَا (مُؤَنَّث مُفْرَد)|صِفَةُ مِلْكِيَّةٍ|son|Déterminant possessif (féminin sg.)|مُحَدِّدُ مِلْكِيَّةٍ (مُؤَنَّثٌ مُفْرَدٌ)|Détermine le nom qui suit|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ
+ses|ـهُ / ـهَا (جَمْع)|صِفَةُ مِلْكِيَّةٍ|son|Déterminant possessif (pluriel)|مُحَدِّدُ مِلْكِيَّةٍ (جَمْعٌ)|Détermine le nom pluriel|يُحَدِّدُ الِاسْمَ الجَمْعَ
+notre|ـنَا (مُفْرَد)|صِفَةُ مِلْكِيَّةٍ|notre|Déterminant possessif (1re pers. pl.)|مُحَدِّدُ مِلْكِيَّةٍ (لِلْمُتَكَلِّمِينَ)|Détermine le nom singulier|يُحَدِّدُ الِاسْمَ المُفْرَدَ
+nos|ـنَا (جَمْع)|صِفَةُ مِلْكِيَّةٍ|notre|Déterminant possessif (pluriel)|مُحَدِّدُ مِلْكِيَّةٍ (جَمْعٌ)|Détermine le nom pluriel|يُحَدِّدُ الِاسْمَ الجَمْعَ
+votre|ـكُمْ (مُفْرَد)|صِفَةُ مِلْكِيَّةٍ|votre|Déterminant possessif (2e pers. pl.)|مُحَدِّدُ مِلْكِيَّةٍ (لِلْمُخَاطَبِينَ)|Détermine le nom singulier|يُحَدِّدُ الِاسْمَ المُفْرَدَ
+vos|ـكُمْ (جَمْع)|صِفَةُ مِلْكِيَّةٍ|votre|Déterminant possessif (pluriel)|مُحَدِّدُ مِلْكِيَّةٍ (جَمْعٌ)|Détermine le nom pluriel|يُحَدِّدُ الِاسْمَ الجَمْعَ
+leur|ـهُمْ / لَهُمْ|صِفَةُ مِلْكِيَّةٍ / ضَمِيرٌ|leur|Déterminant possessif ou Pronom COI|مُحَدِّدُ مِلْكِيَّةٍ أَوْ ضَمِيرُ مَفْعُولٍ بِهِ|Détermine le nom ou COI du verbe|يُحَدِّدُ الِاسْمَ أَوْ يَقَعُ مَفْعُولًا بِهِ غَيْرَ مُبَاشِرٍ
+leurs|ـهُمْ (جَمْع)|صِفَةُ مِلْكِيَّةٍ|leur|Déterminant possessif (pluriel)|مُحَدِّدُ مِلْكِيَّةٍ (جَمْعٌ)|Détermine le nom pluriel|يُحَدِّدُ الِاسْمَ الجَمْعَ
+je|أَنَا|ضَمِيرُ فَاعِلٍ|je|Pronom personnel sujet (1re pers. sg.)|ضَمِيرٌ شَخْصِيٌّ لِلْمُتَكَلِّمِ المُفْرَدِ|Sujet du verbe|فَاعِلُ الفِعْلِ (Sujet)
+tu|أَنْتَ / أَنْتِ|ضَمِيرُ فَاعِلٍ|tu|Pronom personnel sujet (2e pers. sg.)|ضَمِيرٌ شَخْصِيٌّ لِلْمُخَاطَبِ المُفْرَدِ|Sujet du verbe|فَاعِلُ الفِعْلِ (Sujet)
+il|هُوَ|ضَمِيرُ فَاعِلٍ|il|Pronom personnel sujet (3e pers. masc. sg.)|ضَمِيرٌ شَخْصِيٌّ لِلْغَائِبِ المُذَكَّرِ|Sujet du verbe|فَاعِلُ الفِعْلِ (Sujet)
+elle|هِيَ|ضَمِيرُ فَاعِلٍ|elle|Pronom personnel sujet (3e pers. fém. sg.)|ضَمِيرٌ شَخْصِيٌّ لِلْغَائِبَةِ المُؤَنَّثَةِ|Sujet du verbe|فَاعِلُ الفِعْلِ (Sujet)
+nous|نَحْنُ / إِيَّانَا|ضَمِيرٌ|nous|Pronom personnel (1re pers. pl.)|ضَمِيرٌ شَخْصِيٌّ لِلْمُتَكَلِّمِينَ|Sujet ou Complément du verbe|فَاعِلُ الفِعْلِ أَوْ مَفْعُولٌ بِهِ
+vous|أَنْتُمْ / حَضْرَتُكَ|ضَمِيرٌ|vous|Pronom personnel (2e pers. pl.)|ضَمِيرٌ شَخْصِيٌّ لِلْمُخَاطَبِينَ|Sujet ou Complément du verbe|فَاعِلُ الفِعْلِ أَوْ مَفْعُولٌ بِهِ
+ils|هُمْ|ضَمِيرُ فَاعِلٍ|ils|Pronom personnel sujet (3e pers. masc. pl.)|ضَمِيرٌ شَخْصِيٌّ لِلْغَائِبِينَ المُذَكَّرِ|Sujet du verbe|فَاعِلُ الفِعْلِ (Sujet)
+elles|هُنَّ|ضَمِيرُ فَاعِلٍ|elles|Pronom personnel sujet (3e pers. fém. pl.)|ضَمِيرٌ شَخْصِيٌّ لِلْغَائِبَاتِ المُؤَنَّثِ|Sujet du verbe|فَاعِلُ الفِعْلِ (Sujet)
+le|الْـ (مُذَكَّر) / إِيَّاهُ|أَدَاةُ تَعْرِيفٍ / ضَمِيرٌ|le|Article défini (masc. sg.) ou Pronom COD|أَدَاةُ تَعْرِيفٍ أَوْ ضَمِيرُ نَصْبٍ|Détermine le nom ou COD du verbe|يُعَرِّفُ الِاسْمَ أَوْ يَقَعُ مَفْعُولًا بِهِ مُبَاشِرًا
+la|الْـ (مُؤَنَّث) / إِيَّاهَا|أَدَاةُ تَعْرِيفٍ / ضَمِيرٌ|la|Article défini (fém. sg.) ou Pronom COD|أَدَاةُ تَعْرِيفٍ أَوْ ضَمِيرُ نَصْبٍ|Détermine le nom ou COD du verbe|يُعَرِّفُ الِاسْمَ أَوْ يَقَعُ مَفْعُولًا بِهِ مُبَاشِرًا
+les|الْـ (جَمْع) / إِيَّاهُمْ|أَدَاةُ تَعْرِيفٍ / ضَمِيرٌ|les|Article défini (pluriel) ou Pronom COD|أَدَاةُ تَعْرِيفٍ لِلْجَمْعِ أَوْ ضَمِيرٌ|Détermine le nom pluriel ou COD|يُعَرِّفُ الِاسْمَ الجَمْعَ أَوْ يَقَعُ مَفْعُولًا بِهِ
+un|أَدَاةُ تَنْكِيرٍ (مُذَكَّر) / وَاحِدٌ|أَدَاةُ تَنْكِيرٍ|un|Article indéfini (masculin singulier)|أَدَاةُ تَنْكِيرٍ (مُذَكَّرٌ مُفْرَدٌ)|Détermine le nom commun|يُحَدِّدُ الِاسْمَ النَّكِرَةَ المُذَكَّرَ
+une|أَدَاةُ تَنْكِيرٍ (مُؤَنَّث) / وَاحِدَةٌ|أَدَاةُ تَنْكِيرٍ|un|Article indéfini (féminin singulier)|أَدَاةُ تَنْكِيرٍ (مُؤَنَّثٌ مُفْرَدٌ)|Détermine le nom commun|يُحَدِّدُ الِاسْمَ النَّكِرَةَ المُؤَنَّثَ
+des|أَدَاةُ تَنْكِيرٍ (جَمْع) / مِنَ الْـ|أَدَاةُ تَنْكِيرٍ|des|Article indéfini (pluriel) ou contracté|أَدَاةُ تَنْكِيرٍ لِلْجَمْعِ|Détermine le nom pluriel|يُحَدِّدُ الِاسْمَ النَّكِرَةَ الجَمْعَ
+du|مِنَ الْـ / بَعْضُ|أَدَاةُ تَجْزِئَةٍ|du|Article partitif ou article contracté|أَدَاةُ تَجْزِئَةٍ أَوْ تَعْرِيفٍ مُدْغَمَةٍ|Détermine un nom indénombrable|يُحَدِّدُ الِاسْمَ غَيْرَ المَعْدُودِ
+au|إِلَى الْـ / فِي الْـ|حَرْفُ جَرٍّ مُدْغَمٌ|au|Article défini contracté (à + le)|حَرْفُ جَرٍّ وَتَعْرِيفٍ مُدْغَمٌ|Introduit un complément (COI/CC)|يَرْبِطُ الفِعْلَ بِالمَفْعُولِ أَوِ الظَّرْفِ
+aux|إِلَى الْـ / فِي الْـ (جَمْع)|حَرْفُ جَرٍّ مُدْغَمٌ|aux|Article défini contracté (à + les)|حَرْفُ جَرٍّ وَتَعْرِيفٍ لِلْجَمْعِ|Introduit un complément pluriel|يَرْبِطُ الفِعْلَ بِالمَفْعُولِ الجَمْعِ
+de|مِنْ / عَنْ|حَرْفُ جَرٍّ|de|Préposition|حَرْفُ جَرٍّ|Introduit un complément du nom ou du verbe|يَرْبِطُ المُضَافَ إِلَيْهِ أَوِ المَفْعُولَ بِهِ
+à|إِلَى / فِي / عِنْدَ|حَرْفُ جَرٍّ|à|Préposition|حَرْفُ جَرٍّ|Introduit un COI ou complément circonstanciel|يَرْبِطُ المَفْعُولَ غَيْرَ المُبَاشِرِ أَوِ الظَّرْفَ
+en|فِي / بِـ / مِنْهُ|حَرْفُ جَرٍّ / ضَمِيرٌ|en|Préposition ou Pronom adverbial|حَرْفُ جَرٍّ أَوْ ضَمِيرٌ ظَرْفِيٌّ|Introduit un CC ou remplace un complément|يُفِيدُ الظَّرْفِيَّةَ أَوْ يَنُوبُ عَنِ المَفْعُولِ
+ce|هَذَا / ذَلِكَ|اسْمُ إِشَارَةٍ|ce|Déterminant ou Pronom démonstratif|اسْمُ إِشَارَةٍ (مُذَكَّرٌ مُفْرَدٌ)|Détermine le nom ou sujet du verbe être|يُشِيرُ إِلَى الِاسْمِ أَوْ يَقَعُ مُبْتَدَأً
+cette|هَذِهِ / تِلْكَ|اسْمُ إِشَارَةٍ|ce|Déterminant démonstratif (fém. sg.)|اسْمُ إِشَارَةٍ (مُؤَنَّثٌ مُفْرَدٌ)|Détermine le nom féminin qui suit|يُشِيرُ إِلَى الِاسْمِ المُؤَنَّثِ الَّذِي يَلِيهِ
+ces|هَؤُلَاءِ / تِلْكَ|اسْمُ إِشَارَةٍ|ce|Déterminant démonstratif (pluriel)|اسْمُ إِشَارَةٍ (لِلْجَمْعِ)|Détermine le nom pluriel qui suit|يُشِيرُ إِلَى الِاسْمِ الجَمْعِ الَّذِي يَلِيهِ
+et|وَ|حَرْفُ عَطْفٍ|et|Conjonction de coordination|حَرْفُ عَطْفٍ|Relie deux mots ou propositions de même fonction|يَعْطِفُ مُفْرَدَةً أَوْ جُمْلَةً عَلَى مَا قَبْلَهَا
+ou|أَوْ|حَرْفُ عَطْفٍ|ou|Conjonction de coordination (choix)|حَرْفُ عَطْفٍ لِلتَّخْيِيرِ|Relie deux éléments en exprimant l'alternative|يَرْبِطُ بَيْنَ خِيَارَيْنِ فِي الجُمْلَةِ
+mais|لَكِنْ|حَرْفُ اسْتِدْرَاكٍ|mais|Conjonction de coordination (opposition)|حَرْفُ عَطْفٍ وَاسْتِدْرَاكٍ|Exprime une opposition entre deux propositions|يَرْبِطُ جُمْلَتَيْنِ لِبَيَانِ الِاسْتِدْرَاكِ
+car|لِأَنَّ|أَدَاةُ تَعْلِيلٍ|car|Conjonction de coordination (cause)|حَرْفُ عَطْفٍ لِلتَّعْلِيلِ|Introduit une proposition exprimant la cause|يَرْبِطُ جُمْلَةَ السَّبَبِ بِمَا قَبْلَهَا
+donc|إِذَنْ / وَبِالتَّالِي|أَدَاةُ اسْتِنْتَاجٍ|donc|Conjonction de coordination (conséquence)|حَرْفُ عَطْفٍ لِلِاسْتِنْتَاجِ|Introduit une conséquence logique|يَرْبِطُ النَّتِيجَةَ بِالمُقَدِّمَةِ
+dans|فِي / دَاخِلَ|حَرْفُ جَرٍّ|dans|Préposition de lieu ou de temps|حَرْفُ جَرٍّ لِلْمَكَانِ أَوِ الزَّمَانِ|Introduit un complément circonstanciel (CCL/CCT)|يُدْخِلُ ظَرْفَ المَكَانِ أَوِ الزَّمَانِ
+sur|عَلَى / فَوْقَ|حَرْفُ جَرٍّ|sur|Préposition|حَرْفُ جَرٍّ|Introduit un complément circonstanciel ou COI|يُدْخِلُ ظَرْفَ المَكَانِ أَوِ المَوْضُوعَ
+avec|مَعَ / بِوَاسِطَةِ|حَرْفُ جَرٍّ|avec|Préposition|حَرْفُ جَرٍّ|Introduit un CC d'accompagnement ou de moyen|يُفِيدُ المُصَاحَبَةَ أَوِ الوَسِيلَةَ
+sans|بِدُونِ / بِلَا|حَرْفُ جَرٍّ|sans|Préposition|حَرْفُ جَرٍّ لِلنَّفْيِ|Introduit un CC de manière ou d'exclusion|يُفِيدُ نَفْيَ المُصَاحَبَةِ أَوِ الشَّرْطِ
+pour|مِنْ أَجْلِ / لِـ|حَرْفُ جَرٍّ|pour|Préposition|حَرْفُ جَرٍّ لِلتَّعْلِيلِ|Introduit un complément circonstanciel de but|يُدْخِلُ مَفْعُولًا لِأَجْلِهِ (بَيَانُ الغَايَةِ)
+par|بِوَاسِطَةِ / عَبْرَ|حَرْفُ جَرٍّ|par|Préposition|حَرْفُ جَرٍّ|Introduit un complément d'agent ou de moyen|يُدْخِلُ نَائِبَ الفَاعِلِ أَوِ الوَسِيلَةَ
+qui|الَّذِي / الَّتِي / مَنْ|اسْمٌ مَوْصُولٌ|qui|Pronom relatif ou interrogatif|اسْمٌ مَوْصُولٌ أَوِ اسْتِفْهَامٍ|Sujet du verbe de la subordonnée relative|فَاعِلُ فِعْلِ جُمْلَةِ الصِّلَةِ
+que|الَّذِي / أَنَّ / مَاذَا|اسْمٌ مَوْصُولٌ|que|Pronom relatif ou Conjonction de subordination|اسْمٌ مَوْصُولٌ أَوْ حَرْفٌ مَصْدَرِيٌّ|COD du verbe ou introduit une subordonnée|مَفْعُولٌ بِهِ أَوْ أَدَاةُ رَبْطٍ مَصْدَرِيَّةٌ
+ne|لَا / لَمْ|أَدَاةُ نَفْيٍ|ne|Adverbe de négation|حَرْفُ نَفْيٍ|Participe à la négation du verbe|يَنْفِي وُقُوعَ الفِعْلِ مَعَ أَدَاةِ النَّفْيِ الثَّانِيَةِ
+pas|لَيْسَ / لَا|أَدَاةُ نَفْيٍ|pas|Adverbe de négation|ظَرْفُ نَفْيٍ|Complète la négation du verbe|يُتِمُّ مَعْنَى النَّفْيِ لِلْفِعْلِ
+est|يَكُونُ / هُوَ|فِعْلٌ (être)|être|Verbe « être » (3e pers. sg. présent)|فِعْلُ الكَيْنُونَةِ (مُضَارِعٌ مَرْفُوعٌ)|Noyau verbal de la proposition|رُكْنُ الجُمْلَةِ الفِعْلِيَّةِ (فِعْلٌ مُسْنَدٌ)
+sont|يَكُونُونَ / هُمْ|فِعْلٌ (être)|être|Verbe « être » (3e pers. pl. présent)|فِعْلُ الكَيْنُونَةِ (لِلْجَمْعِ المُضَارِعِ)|Noyau verbal de la proposition|رُكْنُ الجُمْلَةِ الفِعْلِيَّةِ (فِعْلٌ مُسْنَدٌ)
+suis|أَكُونُ|فِعْلٌ (être)|être|Verbe « être » (1re pers. sg. présent)|فِعْلُ الكَيْنُونَةِ (لِلْمُتَكَلِّمِ المُضَارِعِ)|Noyau verbal de la proposition|رُكْنُ الجُمْلَةِ الفِعْلِيَّةِ
+était|كَانَ / كَانَتْ|فِعْلٌ (être)|être|Verbe « être » (3e pers. sg. imparfait)|فِعْلُ الكَيْنُونَةِ (مَاضٍ نَاقِصٌ)|Noyau verbal de la proposition|رُكْنُ الجُمْلَةِ الفِعْلِيَّةِ فِي المَاضِي
+a|لَدَيْهِ / يَمْلِكُ|فِعْلٌ (avoir)|avoir|Verbe « avoir » (3e pers. sg. présent)|فِعْلُ المِلْكِيَّةِ أَوْ فِعْلٌ مُسَاعِدٌ|Noyau verbal ou auxiliaire du passé composé|فِعْلٌ أَسَاسِيٌّ أَوْ مُسَاعِدٌ لِتَكْوِينِ المَاضِي
+ont|لَدَيْهِمْ / يَمْلِكُونَ|فِعْلٌ (avoir)|avoir|Verbe « avoir » (3e pers. pl. présent)|فِعْلُ المِلْكِيَّةِ (لِلْجَمْعِ)|Noyau verbal ou auxiliaire|فِعْلٌ أَسَاسِيٌّ أَوْ مُسَاعِدٌ`);
+load('en',`the|الْـ|أَدَاةُ تَعْرِيفٍ|the|Definite article|أَدَاةُ تَعْرِيفٍ|Determines a specific noun phrase|يُعَرِّفُ الِاسْمَ الَّذِي يَلِيهِ وَيُخَصِّصُهُ
+a|أَدَاةُ تَنْكِيرٍ (مُفْرَد)|أَدَاةُ تَنْكِيرٍ|a|Indefinite article (singular)|أَدَاةُ تَنْكِيرٍ لِلْمُفْرَدِ|Determines a singular countable noun|يُحَدِّدُ الِاسْمَ المُفْرَدَ النَّكِرَةَ
+an|أَدَاةُ تَنْكِيرٍ (مُفْرَد)|أَدَاةُ تَنْكِيرٍ|a|Indefinite article (before vowel sound)|أَدَاةُ تَنْكِيرٍ (قَبْلَ صَوْتٍ مُتَحَرِّكٍ)|Determines a singular countable noun|يُحَدِّدُ الِاسْمَ المُفْرَدَ النَّكِرَةَ
+my|ـي / خَاصَّتِي|صِفَةُ مِلْكِيَّةٍ|my|Possessive determiner (1st pers. sg.)|مُحَدِّدُ مِلْكِيَّةٍ (لِلْمُتَكَلِّمِ)|Modifies the following noun|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ وَيَنْسُبُهُ لِلْمُتَكَلِّمِ
+your|ـكَ / ـكُمْ|صِفَةُ مِلْكِيَّةٍ|your|Possessive determiner (2nd pers.)|مُحَدِّدُ مِلْكِيَّةٍ (لِلْمُخَاطَبِ)|Modifies the following noun|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ
+his|ـهُ / خَاصَّتُهُ|صِفَةُ مِلْكِيَّةٍ|his|Possessive determiner (3rd pers. masc.)|مُحَدِّدُ مِلْكِيَّةٍ (لِلْغَائِبِ المُذَكَّرِ)|Modifies the following noun|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ
+her|ـهَا / إِيَّاهَا|صِفَةُ مِلْكِيَّةٍ / ضَمِيرٌ|her|Possessive determiner or Object pronoun|مُحَدِّدُ مِلْكِيَّةٍ أَوْ ضَمِيرُ مَفْعُولٍ بِهِ|Modifies a noun or acts as object|يُحَدِّدُ الِاسْمَ أَوْ يَقَعُ مَفْعُولًا بِهِ
+its|ـهُ / ـهَا (لِغَيْرِ العَاقِلِ)|صِفَةُ مِلْكِيَّةٍ|its|Possessive determiner (neuter)|مُحَدِّدُ مِلْكِيَّةٍ (لِغَيْرِ العَاقِلِ)|Modifies the following noun|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ
+our|ـنَا / خَاصَّتُنَا|صِفَةُ مِلْكِيَّةٍ|our|Possessive determiner (1st pers. pl.)|مُحَدِّدُ مِلْكِيَّةٍ (لِلْمُتَكَلِّمِينَ)|Modifies the following noun|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ
+their|ـهُمْ / خَاصَّتُهُمْ|صِفَةُ مِلْكِيَّةٍ|their|Possessive determiner (3rd pers. pl.)|مُحَدِّدُ مِلْكِيَّةٍ (لِلْغَائِبِينَ)|Modifies the following noun|يُحَدِّدُ الِاسْمَ الَّذِي يَلِيهِ
+this|هَذَا / هَذِهِ|اسْمُ إِشَارَةٍ|this|Demonstrative determiner / pronoun (sg.)|اسْمُ إِشَارَةٍ لِلْمُفْرَدِ القَرِيبِ|Determines a noun or acts as subject/object|يُشِيرُ إِلَى الِاسْمِ أَوْ يَقَعُ فَاعِلًا / مَفْعُولًا
+that|ذَلِكَ / تِلْكَ / الَّذِي|اسْمُ إِشَارَةٍ|that|Demonstrative / Relative pronoun / Conjunction|اسْمُ إِشَارَةٍ أَوِ اسْمٌ مَوْصُولٌ|Introduces a clause or modifies a noun|يُشِيرُ إِلَى البَعِيدِ أَوْ يَرْبِطُ الجُمْلَةَ الفَرْعِيَّةَ
+in|فِي / دَاخِلَ|حَرْفُ جَرٍّ|in|Preposition of place or time|حَرْفُ جَرٍّ|Head of a prepositional phrase (adverbial)|يَرْبِطُ الِاسْمَ المَجْرُورَ لِبَيَانِ المَكَانِ أَوِ الزَّمَانِ
+on|عَلَى / فِي|حَرْفُ جَرٍّ|on|Preposition|حَرْفُ جَرٍّ|Head of a prepositional phrase|يَرْبِطُ الِاسْمَ المَجْرُورَ بِمَا قَبْلَهُ
+at|عِنْدَ / فِي|حَرْفُ جَرٍّ|at|Preposition|حَرْفُ جَرٍّ|Head of a prepositional phrase|يَرْبِطُ الِاسْمَ المَجْرُورَ لِبَيَانِ المَوْضِعِ أَوِ الوَقْتِ
+to|إِلَى / لِـ / أَنْ|حَرْفُ جَرٍّ|to|Preposition or Infinitive marker|حَرْفُ جَرٍّ أَوْ أَدَاةُ مَصْدَرٍ|Introduces a prepositional object or infinitive|يُدْخِلُ المَفْعُولَ أَوْ يَسْبِقُ الفِعْلَ المَصْدَرِيَّ
+from|مِنْ|حَرْفُ جَرٍّ|from|Preposition|حَرْفُ جَرٍّ لِلِابْتِدَاءِ|Head of a prepositional phrase (source)|يُبَيِّنُ مَصْدَرَ الحَدَثِ أَوِ انْطِلَاقَهُ
+with|مَعَ / بِـ|حَرْفُ جَرٍّ|with|Preposition|حَرْفُ جَرٍّ|Head of a prepositional phrase (instrument/accompaniment)|يُفِيدُ المُصَاحَبَةَ أَوِ الوَسِيلَةَ
+by|بِوَاسِطَةِ / بِجَانِبِ|حَرْفُ جَرٍّ|by|Preposition|حَرْفُ جَرٍّ|Introduces agent in passive voice or means|يُدْخِلُ الفَاعِلَ فِي المَبْنِيِّ لِلْمَجْهُولِ أَوِ الوَسِيلَةَ
+for|لِأَجْلِ / لِمُدَّةِ|حَرْفُ جَرٍّ|for|Preposition or Coordinating conjunction|حَرْفُ جَرٍّ أَوْ رَابِطٌ تَعْلِيلِيٌّ|Introduces purpose, beneficiary, or duration|يُبَيِّنُ الغَايَةَ أَوِ المُسْتَفِيدَ أَوِ المُدَّةَ
+of|مِنْ / الْـ (لِلْإِضَافَةِ)|حَرْفُ جَرٍّ|of|Preposition|حَرْفُ جَرٍّ لِلْإِضَافَةِ|Links a noun to its genitive/possessive complement|يَرْبِطُ المُضَافَ بِالمُضَافِ إِلَيْهِ
+and|وَ|حَرْفُ عَطْفٍ|and|Coordinating conjunction|حَرْفُ عَطْفٍ|Connects words, phrases, or clauses of equal rank|يَعْطِفُ المُفْرَدَاتِ أَوِ الجُمَلَ المُتَسَاوِيَةَ
+or|أَوْ|حَرْفُ عَطْفٍ|or|Coordinating conjunction|حَرْفُ عَطْفٍ لِلتَّخْيِيرِ|Connects alternatives|يَرْبِطُ بَيْنَ البَدَائِلِ وَالخِيَارَاتِ
+but|لَكِنْ|حَرْفُ اسْتِدْرَاكٍ|but|Coordinating conjunction|حَرْفُ اسْتِدْرَاكٍ|Connects contrasting ideas or clauses|يَرْبِطُ بَيْنَ جُمْلَتَيْنِ مُتَقَابِلَتَيْنِ
+not|لَا / لَيْسَ|أَدَاةُ نَفْيٍ|not|Adverb of negation|أَدَاةُ نَفْيٍ|Negates the main verb or adjective|يَنْفِي الفِعْلَ أَوِ الصِّفَةَ
+is|يَكُونُ (هُوَ)|فِعْلٌ (be)|be|Verb « be » (3rd pers. sg. present)|فِعْلُ الكَيْنُونَةِ (مُضَارِعٌ مُفْرَدٌ)|Main linking verb (copula) or auxiliary|فِعْلُ رَبْطٍ أَسَاسِيٌّ أَوْ فِعْلٌ مُسَاعِدٌ
+are|يَكُونُونَ|فِعْلٌ (be)|be|Verb « be » (present plural/2nd pers.)|فِعْلُ الكَيْنُونَةِ (مُضَارِعٌ لِلْجَمْعِ)|Main linking verb (copula) or auxiliary|فِعْلُ رَبْطٍ أَسَاسِيٌّ أَوْ فِعْلٌ مُسَاعِدٌ
+was|كَانَ|فِعْلٌ (be)|be|Verb « be » (past singular)|فِعْلُ الكَيْنُونَةِ (مَاضٍ مُفْرَدٌ)|Main linking verb or past auxiliary|فِعْلُ رَبْطٍ فِي المَاضِي أَوْ فِعْلٌ مُسَاعِدٌ
+were|كَانُوا|فِعْلٌ (be)|be|Verb « be » (past plural/subjunctive)|فِعْلُ الكَيْنُونَةِ (مَاضٍ لِلْجَمْعِ)|Main linking verb or past auxiliary|فِعْلُ رَبْطٍ فِي المَاضِي أَوْ فِعْلٌ مُسَاعِدٌ
+has|يَمْلِكُ (هُوَ/هِيَ)|فِعْلٌ (have)|have|Verb « have » (3rd pers. sg. present)|فِعْلُ المِلْكِيَّةِ أَوْ فِعْلٌ مُسَاعِدٌ|Main transitive verb or perfect auxiliary|فِعْلٌ مُتَعَدٍّ أَوْ مُسَاعِدٌ لِلزَّمَنِ التَّامِّ
+had|مَلَكَ|فِعْلٌ (have)|have|Verb « have » (past tense)|فِعْلُ المِلْكِيَّةِ (مَاضٍ)|Main verb or past perfect auxiliary|فِعْلٌ أَسَاسِيٌّ أَوْ مُسَاعِدٌ لِلْمَاضِي التَّامِّ`);
+
+/* ---------- Contextual Nature & Fonction Analyzer (Heuristic + Grammar Rules) ---------- */
+function analyzeNatureAndFonction(word,sent,lang,posAr){
+  const wClean=word.replace(/^['’-]+|['’-]+$/g,'');
+  const low=wClean.toLowerCase();
+  const hit=LEX[lang]&&LEX[lang][low];
+  if(hit&&hit.nature_orig&&hit.fonction_orig){
+    return{
+      nature_orig:hit.nature_orig,
+      nature_ar:hit.nature_ar,
+      fonction_orig:hit.fonction_orig,
+      fonction_ar:hit.fonction_ar
+    };
+  }
+
+  // Tokenize sentence to inspect neighboring words for syntactic role (Fonction)
+  const tokens=(sent.match(/[\p{L}\p{N}'’-]+/gu)||[]);
+  const idx=tokens.findIndex(t=>t.toLowerCase()===low);
+  const prev=idx>0?tokens[idx-1].toLowerCase():'';
+  const next=idx>=0&&idx<tokens.length-1?tokens[idx+1].toLowerCase():'';
+
+  const isCap=/^[A-ZÀ-Ý]/.test(wClean)&&idx>0;
+  const isVerbHint=/فِعْل/.test(posAr);
+  const isAdjHint=/صِفَة/.test(posAr);
+  const isAdvHint=/ظَرْف|حَال/.test(posAr);
+  const isNounHint=/اسْم/.test(posAr);
+
+  if(lang==='fr'){
+    const frDets=new Set(['le','la','les','un','une','des','du','au','aux','ce','cet','cette','ces','mon','ma','mes','ton','ta','tes','son','sa','ses','notre','nos','votre','vos','leur','leurs']);
+    const frPreps=new Set(['de','du','des','à','au','aux','dans','sur','sous','avec','sans','pour','par','chez','vers','entre','contre','depuis','pendant']);
+    const frSubjProns=new Set(['je','tu','il','elle','on','nous','vous','ils','elles','qui']);
+    const frAux=new Set(['suis','es','est','sommes','êtes','sont','étais','était','étions','étiez','étaient','ai','as','a','avons','avez','ont','avais','avait']);
+
+    let natOrig='Nom commun',natAr='اسْمٌ عَامٌّ (Nom commun)';
+    let fnOrig='Noyau du groupe nominal',fnAr='نَوَاةُ المُرَكَّبِ الِاسْمِيِّ';
+
+    if(isCap){
+      natOrig='Nom propre';natAr='اسْمُ عَلَمٍ (Nom propre)';
+    }else if(isVerbHint||frSubjProns.has(prev)||frAux.has(prev)||/(er|ir|oir|re|ais|ait|aient|ons|ez|ent|é|ée|és|ées)$/.test(low)&&!frDets.has(prev)){
+      natOrig='Verbe conjugué ou à l’infinitif';natAr='فِعْلٌ (Verbe)';
+      fnOrig='Noyau verbal de la proposition (Prédicat)';fnAr='رُكْنُ الجُمْلَةِ الفِعْلِيَّةِ (فِعْلٌ مُسْنَدٌ)';
+      return{nature_orig:natOrig,nature_ar:natAr,fonction_orig:fnOrig,fonction_ar:fnAr};
+    }else if(isAdvHint||/(ment)$/.test(low)){
+      natOrig='Adverbe';natAr='ظَرْفٌ / حَالٌ (Adverbe)';
+      fnOrig='Modifie le sens du verbe, de l’adjectif ou de la phrase';fnAr='ظَرْفٌ يُقَيِّدُ مَعْنَى الفِعْلِ أَوِ الصِّفَةِ';
+      return{nature_orig:natOrig,nature_ar:natAr,fonction_orig:fnOrig,fonction_ar:fnAr};
+    }else if(isAdjHint||/(eux|euse|ique|able|ible|if|ive|al|ale|aux)$/.test(low)){
+      natOrig='Adjectif qualificatif';natAr='صِفَةٌ / نَعْتٌ (Adjectif)';
+      fnOrig=frAux.has(prev)?'Attribut du sujet':'Épithète du nom';
+      fnAr=frAux.has(prev)?'خَبَرٌ لِلْمُبْتَدَأِ (Attribut du sujet)':'نَعْتٌ تَابِعٌ لِلِاسْمِ (Épithète)';
+      return{nature_orig:natOrig,nature_ar:natAr,fonction_orig:fnOrig,fonction_ar:fnAr};
+    }
+
+    // Determine syntactic function (Fonction) for nouns
+    if(idx===0||(idx===1&&frDets.has(prev))){
+      fnOrig='Sujet du verbe (en tête de phrase)';fnAr='فَاعِلٌ أَوْ مُبْتَدَأٌ فِي صَدْرِ الجُمْلَةِ (Sujet)';
+    }else if(prev==='de'||prev==='du'||prev==='des'){
+      fnOrig='Complément du nom (introduit par « de »)';fnAr='مُضَافٌ إِلَيْهِ مَجْرُورٌ (Complément du nom)';
+    }else if(frPreps.has(prev)){
+      fnOrig='Complément circonstanciel ou COI (introduit par préposition)';fnAr='مَفْعُولٌ غَيْرُ مُبَاشِرٍ أَوْ ظَرْفٌ (COI / CC)';
+    }else if(frAux.has(prev)||(idx>=2&&frDets.has(prev)&&frAux.has(tokens[idx-2]?.toLowerCase()))){
+      fnOrig='Attribut du sujet';fnAr='خَبَرُ فِعْلِ الكَيْنُونَةِ (Attribut du sujet)';
+    }else if(frDets.has(prev)){
+      fnOrig='Complément d’objet direct (COD) du verbe';fnAr='مَفْعُولٌ بِهِ مُبَاشِرٌ (COD)';
+    }
+    return{nature_orig:natOrig,nature_ar:natAr,fonction_orig:fnOrig,fonction_ar:fnAr};
+  } else {
+    // English Nature & Fonction
+    const enDets=new Set(['the','a','an','this','that','these','those','my','your','his','her','its','our','their','some','any','each','every']);
+    const enPreps=new Set(['in','on','at','to','from','with','by','for','of','about','into','through','during','before','after','under','over','between']);
+    const enSubjProns=new Set(['i','you','he','she','it','we','they','who','which','that']);
+    const enAux=new Set(['am','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','can','could','shall','should','may','might','must']);
+
+    let natOrig='Common Noun',natAr='اسْمٌ عَامٌّ (Common Noun)';
+    let fnOrig='Head of Noun Phrase',fnAr='نَوَاةُ المُرَكَّبِ الِاسْمِيِّ';
+
+    if(isCap){
+      natOrig='Proper Noun';natAr='اسْمُ عَلَمٍ (Proper Noun)';
+    }else if(isVerbHint||enSubjProns.has(prev)||enAux.has(prev)||prev==='to'||/(ing|ed)$/.test(low)&&!enDets.has(prev)){
+      natOrig='Verb (Finite or Non-finite)';natAr='فِعْلٌ (Verb)';
+      fnOrig='Main Predicate / Verb Phrase Head';fnAr='المُسْنَدُ الفِعْلِيُّ فِي الجُمْلَةِ (Predicate)';
+      return{nature_orig:natOrig,nature_ar:natAr,fonction_orig:fnOrig,fonction_ar:fnAr};
+    }else if(isAdvHint||low.endsWith('ly')){
+      natOrig='Adverb';natAr='ظَرْفٌ / حَالٌ (Adverb)';
+      fnOrig='Adverbial Modifier (modifies verb/adjective)';fnAr='ظَرْفٌ مُقَيِّدٌ لِلْفِعْلِ أَوِ الصِّفَةِ';
+      return{nature_orig:natOrig,nature_ar:natAr,fonction_orig:fnOrig,fonction_ar:fnAr};
+    }else if(isAdjHint||/(ous|ful|less|able|ible|ive|ic|al|ent|ant)$/.test(low)){
+      natOrig='Adjective';natAr='صِفَةٌ / نَعْتٌ (Adjective)';
+      fnOrig=enAux.has(prev)?'Subject Complement (Predicative)':'Attributive Modifier of Noun';
+      fnAr=enAux.has(prev)?'خَبَرٌ مُكَمِّلٌ لِلْفَاعِلِ (Subject Complement)':'نَعْتٌ سَابِقٌ لِلِاسْمِ (Attributive Modifier)';
+      return{nature_orig:natOrig,nature_ar:natAr,fonction_orig:fnOrig,fonction_ar:fnAr};
+    }
+
+    if(idx===0||(idx===1&&enDets.has(prev))){
+      fnOrig='Subject of the Clause';fnAr='فَاعِلٌ أَوْ مُبْتَدَأُ الجُمْلَةِ (Subject)';
+    }else if(enPreps.has(prev)||(idx>=2&&enDets.has(prev)&&enPreps.has(tokens[idx-2]?.toLowerCase()))){
+      fnOrig='Object of Preposition (Adverbial / Genitive)';fnAr='اسْمٌ مَجْرُورٌ بِحَرْفِ الجَرِّ (Object of Preposition)';
+    }else if(enAux.has(prev)||(idx>=2&&enDets.has(prev)&&enAux.has(tokens[idx-2]?.toLowerCase()))){
+      fnOrig='Subject Complement (Predicate Nominative)';fnAr='خَبَرُ فِعْلِ الكَيْنُونَةِ (Subject Complement)';
+    }else if(enDets.has(prev)){
+      fnOrig='Direct Object of the Verb';fnAr='مَفْعُولٌ بِهِ مُبَاشِرٌ (Direct Object)';
+    }
+    return{nature_orig:natOrig,nature_ar:natAr,fonction_orig:fnOrig,fonction_ar:fnAr};
+  }
+}
+
+/* ---------- theme / modals / toast ---------- */
+function setThemeIcon(){$('themeIcon').textContent=document.documentElement.classList.contains('dark')?'light_mode':'dark_mode'}
+function toggleTheme(){const d=document.documentElement.classList.toggle('dark');store.set(K.theme,d?'dark':'light');setThemeIcon()}
+function show(id,o){$(id).hidden=!o;if(o){const f=$(id).querySelector('textarea,input[type=password]');f&&setTimeout(()=>{if(id==='apiModal')$('gemKey').value=S.gem;f.focus()},50)}}
+function openWelcome(f){if(!f&&store.get(K.wel)==='true')return;$('noWelcome').checked=store.get(K.wel)==='true';$('welcomeModal').hidden=false}
+function closeWelcome(){$('noWelcome').checked?store.set(K.wel,'true'):store.del(K.wel);$('welcomeModal').hidden=true}
+let tt;function toast(m){const e=$('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),2600)}
+
+/* ---------- selection mode (word vs sentence) ---------- */
+function setSelectMode(m){
+  S.selectMode=m;
+  $('modeWord').classList.toggle('on',m==='word');
+  $('modeSent').classList.toggle('on',m==='sentence');
+  document.body.classList.toggle('sent-mode',m==='sentence');
+  toast(m==='sentence'?'وضع اختيار الجملة الكاملة: انقر على أي جملة لترجمتها وسماعها':'وضع اختيار الكلمة: انقر على أي كلمة لتحليلها نحوياً وترجمتها');
+}
+
+/* ---------- speech (Foreign + Vocalized Arabic TTS) ---------- */
+const Speech={voices:[],uri:'',rate:1,playing:false,paused:false,idx:0,loop:null,timer:null,sid:0,
+init(){if(!('speechSynthesis' in window))return;const l=()=>{const v=speechSynthesis.getVoices()||[];if(v.length){this.voices=v;this.fill(S.lang)}};l();speechSynthesis.onvoiceschanged=l;setTimeout(l,600)},
+rank(v,p){const n=v.name.toLowerCase();if(!v.lang.toLowerCase().replace('_','-').startsWith(p))return -1;let s=10;if(n.includes('google'))s+=45;if(/natural|neural|online/.test(n))s+=35;if(/premium|enhanced/.test(n))s+=30;if(/aria|denise|henri|samantha|thomas|am[ée]lie|hamed|salma|tarik|zira|maged|laila/.test(n))s+=25;return s},
+ranked(l){const p=l==='ar'?'ar':l==='fr'?'fr':'en';return this.voices.map(v=>[v,this.rank(v,p)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).map(x=>x[0])},
+fill(l){const s=$('voiceSel');if(!s)return;const r=this.ranked(l);s.replaceChildren();if(!r.length){s.add(new Option(`الصوت الافتراضي (${l.toUpperCase()})`,''));this.uri='';return}
+ r.forEach(v=>s.add(new Option(`${v.name.replace(/Microsoft |Google |Apple /g,'')} (${v.lang})`,v.voiceURI)));if(!r.some(v=>v.voiceURI===this.uri))this.uri=r[0].voiceURI;s.value=this.uri},
+best(l){const r=this.ranked(l);if(l==='ar')return r[0]||null;return r.find(v=>v.voiceURI===this.uri)||r[0]||null},
+utter(t,l,rate){const u=new SpeechSynthesisUtterance(t);u.lang=l==='ar'?'ar-SA':l==='fr'?'fr-FR':'en-US';u.rate=rate;const v=this.best(l);if(v)u.voice=v;return u},
+setRate(r){this.rate=r;if(this.playing&&!this.paused)this.playFrom(this.idx)},
+wave(a){$('wave').classList.toggle('on',a)},
+speak(text,lang,rate=1,loop=null){if(!('speechSynthesis' in window)||!text)return;this.stop(false);this.loop=loop;const sid=this.sid;
+ const run=()=>{if(sid!==this.sid)return;speechSynthesis.cancel();const u=this.utter(text,lang,rate);u.onstart=()=>this.wave(true);
+  u.onend=()=>{if(sid!==this.sid)return;this.wave(false);if(loop)this.timer=setTimeout(run,650)};u.onerror=()=>{if(sid===this.sid)this.wave(false)};speechSynthesis.speak(u)};run()},
+speakArabic(text,rate=.92){
+  if(!text)return;
+  const cleanAr=text.replace(/[()\/\-—«»]/g,' ').replace(/\s+/g,' ').trim();
+  if(!cleanAr)return;
+  if('speechSynthesis' in window){
+    const arVoices=this.ranked('ar');
+    if(arVoices.length){this.speak(cleanAr,'ar',rate);return}
+  }
+  this.stop(false);
+  try{
+    const a=new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&tl=ar&client=tw-ob&q=${encodeURIComponent(cleanAr.slice(0,200))}`);
+    a.playbackRate=rate;a.play().catch(()=>toast('يرجى تفعيل الصوت في المتصفح'));
+  }catch{toast('تعذر تشغيل النطق العربي')}
+},
+playFrom(i=0){if(!('speechSynthesis' in window)||!S.recs.length)return;this.stop(false);this.playing=true;this.paused=false;this.idx=Math.max(0,Math.min(i,S.recs.length-1));this.ui();const sid=this.sid;
+ const next=()=>{if(sid!==this.sid||!this.playing||this.paused)return;if(this.idx>=S.recs.length){this.stop();return}
+  const r=S.recs[this.idx];renderPage(r.page);hl(r.tokens);r.tokens[0]?.scrollIntoView({behavior:'smooth',block:'center'});
+  speechSynthesis.cancel();const u=this.utter(r.text,S.lang,this.rate);u.onstart=()=>this.wave(true);
+  const adv=()=>{if(sid!==this.sid||!this.playing||this.paused)return;this.idx++;next()};u.onend=adv;u.onerror=adv;speechSynthesis.speak(u)};next()},
+pause(){if(!this.playing)return;this.paused=true;speechSynthesis.cancel();this.wave(false);this.ui()},
+resume(){if(this.playing&&this.paused)this.playFrom(this.idx)},
+stop(ui=true){this.sid++;clearTimeout(this.timer);this.loop=null;this.playing=false;this.paused=false;if('speechSynthesis' in window)speechSynthesis.cancel();this.wave(false);if(ui){this.ui();repeatUI()}},
+ui(){const on=this.playing&&!this.paused;$('playIcon').textContent=on?'pause':'play_arrow';$('playLbl').textContent=on?'إيقاف مؤقت':this.playing?'متابعة الاستماع':'استماع للمستند';$('stopBtn').hidden=!this.playing}};
+function toggleDocAudio(){Speech.playing?(Speech.paused?Speech.resume():Speech.pause()):Speech.playFrom(Math.max(0,S.selIdx))}
+
+/* ---------- language ---------- */
+function detect(t){if(S.override!=='auto')return S.override;const s=t.slice(0,3000).toLowerCase();
+ const fr=(s.match(/[éèêëàâîïôùûüçœæ]|\b(le|la|les|des|une|dans|pour|avec|sur|est|sont|qui|que|pas|plus|cette|nous|vous|mais|ou|donc|aux|ces|mon|ma|mes)\b/g)||[]).length;
+ const en=(s.match(/\b(the|and|that|have|for|not|with|you|this|but|his|from|they|which|their|would|about|there|into|could|were|been)\b/g)||[]).length;return fr>en?'fr':'en'}
+function setLang(v){S.override=v;S.lang=detect(S.pages.slice(0,5).flatMap(p=>p.blocks.map(b=>b.text)).join(' '));Speech.fill(S.lang);toast(`اللغة المختارة: ${S.lang==='fr'?'الفرنسية (FR)':'الإنجليزية (EN)'}`)}
+
+/* ---------- ingestion ---------- */
+const clean=t=>t.replace(/[\u200B-\u200D\uFEFF]/g,'').replace(/\u00A0/g,' ').replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/\s+/g,' ').trim();
+const paras=t=>t.split(/\r?\n\s*\r?\n/).map(p=>clean(p.replace(/\r?\n/g,' '))).filter(Boolean).map(p=>({type:'p',text:p}));
+function progress(v,t='',p=0){$('prog').hidden=!v;if(!v)return;$('pgText').textContent=t;$('pgPct').textContent=Math.round(p)+'%';$('pgBar').style.width=Math.round(p)+'%'}
+const need=x=>{if(!x)throw new Error('lib')};
+async function ingest(f){Speech.stop();const n=f.name.toLowerCase();
+ try{if(n.endsWith('.pdf')||f.type==='application/pdf')await readPDF(f);else if(n.endsWith('.docx'))await readDOCX(f);else if(f.type.startsWith('image/')||/\.(png|jpe?g|webp|bmp)$/.test(n))await readImage(f);else openDoc(f.name,[{pageNumber:1,blocks:paras(await f.text())}])}
+ catch(e){console.error(e);progress(false);toast(e.message==='lib'?'تعذر تحميل مكتبة القراءة، تحقق من الاتصال.':'تعذر استخراج محتوى الملف.')}}
+function pdfBlocks(items){
+ const sz=items.map(i=>i.fs).sort((a,b)=>a-b),med=sz[sz.length>>1]||12;items.sort((a,b)=>b.y-a.y||a.x-b.x);
+ const lines=[];let cur=[items[0]];for(let i=1;i<items.length;i++){const it=items[i];if(Math.abs(it.y-cur[0].y)<=Math.max(4,cur[0].fs*.4))cur.push(it);else{lines.push(cur);cur=[it]}}lines.push(cur);
+ const minX=items.reduce((m,i)=>Math.min(m,i.x),Infinity);
+ const L=lines.map(l=>{l.sort((a,b)=>a.x-b.x);let t='';l.forEach((it,j)=>{if(j){const p=l[j-1];if(it.x-(p.x+p.w)>it.fs*.2&&!t.endsWith(' ')&&!it.s.startsWith(' '))t+=' '}t+=it.s});
+  return{t:clean(t),y:l[0].y,ind:Math.max(0,Math.round(l[0].x-minX)),fs:l.reduce((a,i)=>a+i.fs,0)/l.length}}).filter(l=>l.t);
+ const blocks=[];let a=null;
+ L.forEach((ln,i)=>{const pv=L[i-1],gap=pv?pv.y-ln.y:0,head=ln.fs>=med*1.25&&ln.t.length<140,li=/^([•\-–—*]|\d+[.)])\s+/.test(ln.t);
+  if(!pv||gap>ln.fs*1.45||head||li||a.type[0]==='h'){a&&blocks.push(a);a={type:ln.fs>=med*1.5&&ln.t.length<120?'h1':head?'h2':li?'li':'p',text:ln.t,indent:ln.ind>18?Math.min(ln.ind,48):0}}
+  else if(/[A-Za-zÀ-ÿ]-$/.test(a.text)&&/^[a-zà-ÿ]/.test(ln.t))a.text=a.text.slice(0,-1)+ln.t;else a.text+=' '+ln.t});
+ a&&blocks.push(a);return blocks}
+async function readPDF(f){need(window.pdfjsLib);pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+ progress(true,'جاري قراءة صفحات PDF...',8);const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise,pages=[];
+ for(let n=1;n<=pdf.numPages;n++){if(n%3===1||n===pdf.numPages){progress(true,`استخراج الصفحة ${n} من ${pdf.numPages}...`,10+n/pdf.numPages*85);await new Promise(r=>setTimeout(r))}
+  const pg=await pdf.getPage(n),ct=await pg.getTextContent();
+  const items=ct.items.filter(i=>i.str&&i.str.trim()).map(i=>({s:i.str,x:i.transform[4],y:i.transform[5],w:i.width||0,fs:Math.round(Math.hypot(i.transform[0],i.transform[1])*10)/10}));
+  pages.push({pageNumber:n,blocks:items.length?pdfBlocks(items):[]});pg.cleanup()}
+ pdf.destroy();openDoc(f.name,pages)}
+async function readDOCX(f){need(window.mammoth);progress(true,'جاري تحليل مستند Word...',45);
+ const r=await mammoth.convertToHtml({arrayBuffer:await f.arrayBuffer()}),d=new DOMParser().parseFromString(r.value,'text/html'),blocks=[];
+ d.body.childNodes.forEach(n=>{if(n.nodeType!==1)return;const tg=n.tagName.toLowerCase(),t=clean(n.textContent);if(!t)return;
+  if(tg==='h1')blocks.push({type:'h1',text:t});else if(/^h[2-6]$/.test(tg))blocks.push({type:'h2',text:t});
+  else if(tg==='ul'||tg==='ol')n.querySelectorAll('li').forEach(li=>{const x=clean(li.textContent);x&&blocks.push({type:'li',text:x})});else blocks.push({type:'p',text:t})});
+ openDoc(f.name,[{pageNumber:1,blocks}])}
+async function readImage(f){need(window.Tesseract);progress(true,'تهيئة محرك التعرف الضوئي (OCR)...',10);
+ const w=await Tesseract.createWorker(['eng','fra'],1,{logger:m=>{if(m.status==='recognizing text')progress(true,'جاري استخراج النص من الصورة...',15+m.progress*80)}});
+ try{const{data:{text}}=await w.recognize(f);openDoc(f.name,[{pageNumber:1,blocks:paras(text)}])}finally{await w.terminate()}}
+function readPasted(){const t=$('pasteInput').value.trim();if(!t)return;$('pasteInput').value='';show('pasteModal',0);openDoc('مستند نصي',[{pageNumber:1,blocks:paras(t)}])}
+
+/* ---------- document model & lazy rendering ---------- */
+function splitSentences(text){
+ const N='\u0000',p=text.replace(/\b(Mr|Mrs|Ms|Dr|Prof|St|Sr|Jr|Mme|Mlle|etc|vs|fig|vol|M)\./g,'$1'+N).replace(/\b([ei])\.([ge])\./g,'$1'+N+'$2'+N).replace(/(\d)\.(\d)/g,'$1'+N+'$2');
+ const out=[],re=/[.!?…]+["'»”)\]]*\s*/g;let last=0,m;
+ while((m=re.exec(p))){const end=m.index+m[0].length;if(!/\s$/.test(m[0])&&end<p.length)continue;out.push(p.slice(last,end));last=end}
+ if(last<p.length)out.push(p.slice(last));return out.map(s=>s.split(N).join('.'))}
+function openDoc(title,pages){progress(false);
+ if(!pages.some(p=>p.blocks.length)){toast('لا يوجد نص قابل للقراءة (قد يكون الملف ممسوحاً ضوئياً — جرّبه كصور).');return}
+ S.title=title;S.pages=pages;S.recs=[];S.sel=null;S.selIdx=-1;S.lang=detect(pages.slice(0,6).flatMap(p=>p.blocks.map(b=>b.text)).join(' '));Speech.fill(S.lang);
+ pages.forEach((pg,pi)=>pg.blocks.forEach(b=>{b.sents=splitSentences(b.text).map(raw=>{const text=raw.trim();if(!text)return null;S.recs.push({text,tokens:[],page:pi,sentEl:null});return{raw,id:S.recs.length-1}}).filter(Boolean)}));
+ $('empty').hidden=true;$('work').hidden=false;document.body.classList.add('has-doc');$('docTitleInput').value=title;$('jump').max=pages.length;$('jump').value=1;$('pgCount').textContent=`/ ${pages.length}`;
+ closePanel();scrollTo(0,0);buildSheets()}
+function buildSheets(){const c=$('pages');S.io?.disconnect();c.replaceChildren();
+ S.io='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){renderPage(+e.target.dataset.p);S.io.unobserve(e.target)}}),{rootMargin:'1500px 0px'}):null;
+ const fr=document.createDocumentFragment();
+ S.pages.forEach((pg,i)=>{const a=document.createElement('article');a.className='sheet pending';a.id='doc-page-'+pg.pageNumber;a.dataset.p=i;
+  a.innerHTML=`<div class="body"></div><div class="sf"><b>Readdy</b><span>${pg.pageNumber} / ${S.pages.length}</span></div>`;fr.append(a)});
+ c.append(fr);[...c.children].forEach(a=>S.io?S.io.observe(a):renderPage(+a.dataset.p))}
+const WORD=/[\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*/gu;
+function renderPage(pi){const a=$('pages').children[pi];if(!a||a.dataset.done)return;a.dataset.done=1;a.classList.remove('pending');
+ const saved=new Set(S.saved.map(w=>w.word.toLowerCase())),body=a.firstChild,tag={h1:'h1',h2:'h2'};
+ S.pages[pi].blocks.forEach(b=>{const el=document.createElement(tag[b.type]||(b.type==='li'?'div':'p'));if(b.type==='li')el.className='li';if(b.indent)el.style.paddingLeft=b.indent+'px';
+  b.sents.forEach(({raw,id})=>{const rec=S.recs[id];rec.tokens=[];const sentSpan=document.createElement('span');sentSpan.className='sent-span';sentSpan.dataset.s=id;rec.sentEl=sentSpan;
+   let last=0;for(const m of raw.matchAll(WORD)){const w=m[0];if(m.index>last)sentSpan.append(raw.slice(last,m.index));
+    const s=document.createElement('span');s.className='wt'+(saved.has(w.toLowerCase())?' bm':'');s.textContent=w;s.dataset.s=id;s.dataset.w=w.toLowerCase();rec.tokens.push(s);sentSpan.append(s);last=m.index+w.length}
+   if(last<raw.length)sentSpan.append(raw.slice(last));el.append(sentSpan)});body.append(el)})}
+
+$('pages').addEventListener('click',e=>{
+  if(S.selectMode==='sentence'){
+    const sp=e.target.closest('.sent-span');
+    if(!sp)return;
+    const id=+sp.dataset.s;
+    onSentenceSelect(sp,S.recs[id].text,S.recs[id].tokens,id);
+    return;
+  }
+  const t=e.target.closest('.wt');
+  if(!t)return;
+  const id=+t.dataset.s;
+  onWord(t,t.textContent,S.recs[id].text,S.recs[id].tokens,id);
+});
+
+function jumpPage(v){const n=Math.max(1,Math.min(S.pages.length,parseInt(v,10)||1));$('jump').value=n;$('doc-page-'+n)?.scrollIntoView({behavior:'smooth',block:'start'})}
+function setFont(m){document.documentElement.style.setProperty('--df',m==='serif'?"'Literata',Georgia,serif":"'Inter',system-ui,sans-serif");$('fSerif').classList.toggle('on',m==='serif');$('fSans').classList.toggle('on',m!=='serif')}
+function setSize(d){S.size=Math.min(24,Math.max(14,S.size+d));$('fSize').textContent=S.size+'px';document.documentElement.style.setProperty('--fs',S.size+'px')}
+function hl(t){S.toks.forEach(x=>x.classList.remove('sh'));t.forEach(x=>x.classList.add('sh'));S.toks=t}
+function clearHighlights(){S.activeEl?.classList.remove('act');S.activeEl=null;S.activeSentEl?.classList.remove('sent-act');S.activeSentEl=null;hl([])}
+function goHome(){Speech.stop();S.io?.disconnect();S.pages=[];S.recs=[];S.sel=null;S.selIdx=-1;$('pages').replaceChildren();$('empty').hidden=false;$('work').hidden=true;document.body.classList.remove('has-doc');closePanel();scrollTo(0,0)}
+
+/* ---------- lemmatization & morphology helpers ---------- */
+function guessLemma(word,lang){
+  const w=word.toLowerCase().replace(/^['’-]+|['’-]+$/g,'');
+  if(LEX[lang]&&LEX[lang][w]&&LEX[lang][w].lemma)return LEX[lang][w].lemma;
+  if(lang==='en'){
+    const irr={was:'be',were:'be',been:'be',being:'be',am:'be',is:'be',are:'be',had:'have',has:'have',having:'have',did:'do',does:'do',doing:'do',done:'do',went:'go',gone:'go',going:'go',saw:'see',seen:'see',took:'take',taken:'take',made:'make',making:'make',said:'say',came:'come',coming:'come',knew:'know',known:'know',thought:'think',wrote:'write',written:'write',writing:'write',spoke:'speak',spoken:'speak',gave:'give',given:'give',found:'find',told:'tell',felt:'feel',left:'leave',brought:'bring',began:'begin',begun:'begin',kept:'keep',held:'hold',stood:'stand',heard:'hear',meant:'mean',met:'meet',ran:'run',paid:'pay',sat:'sit',led:'lead',read:'read',grew:'grow',grown:'grow',lost:'lose',fell:'fall',fallen:'fall',sent:'send',built:'build',understood:'understand',drew:'draw',drawn:'draw',broke:'break',broken:'break',spent:'spend',cut:'cut',rose:'rise',risen:'rise',drove:'drive',driven:'drive',bought:'buy',wore:'wear',worn:'wear',chose:'choose',chosen:'choose'};
+    if(irr[w])return irr[w];
+    if(w.length>4&&w.endsWith('ied'))return w.slice(0,-3)+'y';
+    if(w.length>4&&w.endsWith('ies'))return w.slice(0,-3)+'y';
+    if(w.length>5&&w.endsWith('ing'))return w.slice(0,-3);
+    if(w.length>4&&w.endsWith('ed'))return w.slice(0,-2);
+    if(w.length>3&&w.endsWith('s')&&!w.endsWith('ss'))return w.slice(0,-1);
+  }else if(lang==='fr'){
+    const irr={suis:'être',es:'être',est:'être',sommes:'être',êtes:'être',sont:'être',étais:'être',était:'être',étions:'être',étiez:'être',étaient:'être',été:'être',sera:'être',seront:'être',ai:'avoir',as:'avoir',a:'avoir',avons:'avoir',avez:'avoir',ont:'avoir',avais:'avoir',avait:'avoir',eu:'avoir',aura:'avoir',vais:'aller',vas:'aller',va:'aller',allons:'aller',allez:'aller',vont:'aller',allé:'aller',ira:'aller',fais:'faire',fait:'faire',faisons:'faire',faites:'faire',font:'faire',faisait:'faire',fera:'faire',peux:'pouvoir',peut:'pouvoir',pouvons:'pouvoir',peuvent:'pouvoir',pu:'pouvoir',pourra:'pouvoir',dois:'devoir',doit:'devoir',devons:'devoir',doivent:'devoir',dû:'devoir',veux:'vouloir',veut:'vouloir',voulons:'vouloir',veulent:'vouloir',voulu:'vouloir',sais:'savoir',sait:'savoir',savons:'savoir',savent:'savoir',su:'savoir',vois:'voir',voit:'voir',voyons:'voir',voient:'voir',vu:'voir',viens:'venir',vient:'venir',venons:'venir',viennent:'venir',venu:'venir',prends:'prendre',prend:'prendre',prenons:'prendre',prennent:'prendre',pris:'prendre',dit:'dire',disons:'dire',dites:'dire',disent:'dire',écrit:'écrire',écrivent:'écrire',lit:'lire',lisent:'lire',lu:'lire'};
+    if(irr[w])return irr[w];
+    if(w.length>5&&/(ions|iez|aient|eront|erez)$/.test(w))return w.replace(/(ions|iez|aient|eront|erez)$/,'er');
+    if(w.length>4&&/(ais|ait|ant|ez|ons|ent|és|ée|ées|é)$/.test(w))return w.replace(/(ais|ait|ant|ez|ons|ent|és|ée|ées|é)$/,'er');
+  }
+  return w;
+}
+
+/* ---------- translation engine ---------- */
+async function jfetch(url,ms=3500,opt={}){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);try{const r=await fetch(url,{...opt,signal:c.signal});if(!r.ok)throw new Error(r.status);return await r.json()}finally{clearTimeout(t)}}
+async function translate(q,sl,tl='ar',max=500){const e=encodeURIComponent(q.slice(0,max));
+ const tries=[async()=>{const d=await jfetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&dt=bd&q=${e}`);const p=(d[0]||[]).map(c=>c[0]).join('').trim();if(!p)throw 0;const alt=[];
+   (d[1]||[]).forEach(g=>(g[1]||[]).slice(0,3).forEach(a=>{if(a&&a!==p&&!alt.includes(a))alt.push(a)}));return{primary:p,alternatives:alt.slice(0,4),provider:'Google'}},
+  async()=>{const d=await jfetch(`https://lingva.ml/api/v1/${sl}/${tl}/${e}`);if(!d.translation)throw 0;return{primary:d.translation.trim(),alternatives:[],provider:'Lingva'}},
+  async()=>{const d=await jfetch(`https://api.mymemory.translated.net/get?q=${e}&langpair=${sl}|${tl}`,4000),t=d?.responseData?.translatedText?.trim();if(!t||t.includes('MYMEMORY WARNING'))throw 0;return{primary:t,alternatives:[],provider:'MyMemory'}}];
+ for(const f of tries){try{return await f()}catch{}}throw new Error('fail')}
+const trText=(t,l)=>t&&t.trim()?translate(t,l,'ar',1200).then(r=>r.primary).catch(()=>''):Promise.resolve('');
+async function lexMeta(w,lang){const o={ipa:'',pos_ar:'',lemma:guessLemma(w,lang),def:'',ex:''};
+ const pm={noun:'اسْمٌ',verb:'فِعْلٌ',adjective:'صِفَةٌ',adverb:'ظَرْفٌ / حَالٌ',pronoun:'ضَمِيرٌ',preposition:'حَرْفُ جَرٍّ',conjunction:'أَدَاةُ رَبْطٍ',interjection:'تَعَجُّبٌ',nom:'اسْمٌ',verbe:'فِعْلٌ',adjectif:'صِفَةٌ',adverbe:'ظَرْفٌ','préposition':'حَرْفُ جَرٍّ',pronom:'ضَمِيرٌ'};
+ try{if(lang==='en'){const e=(await jfetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(w.toLowerCase())}`,3000))[0],m=e.meanings?.[0],d=m?.definitions?.[0],pr=(m?.partOfSpeech||'').toLowerCase();
+   Object.assign(o,{ipa:e.phonetic||(e.phonetics||[]).find(p=>p.text)?.text||'',pos_ar:pm[pr]||pr,lemma:e.word||o.lemma,def:d?.definition||'',ex:d?.example||''})}
+  else{const d=(await jfetch(`https://fr.wiktionary.org/api/rest_v1/page/definition/${encodeURIComponent(w.toLowerCase())}`,3000)).fr?.[0],i=d?.definitions?.[0],pr=(d?.partOfSpeech||'').toLowerCase(),st=s=>(s||'').replace(/<[^>]+>/g,'').trim().slice(0,180);
+   Object.assign(o,{pos_ar:pm[pr]||pr,def:st(i?.definition),ex:st(i?.examples?.[0])})}}catch{}return o}
+function localPhrase(sent,w){const ws=sent.split(/\s+/),t=w.toLowerCase(),i=ws.findIndex(x=>x.toLowerCase().replace(/[^\p{L}\p{N}'’-]/gu,'')===t);return i<0?w:ws.slice(Math.max(0,i-1),i+3).join(' ')}
+
+async function hybrid(word,sent,lang){
+ const w=word.replace(/^['’-]+|['’-]+$/g,''),ph=localPhrase(sent,w);
+ const[wt,pt,st,m]=await Promise.all([translate(w,lang,'ar',100),ph!==w?trText(ph,lang):'',trText(sent,lang),lexMeta(w,lang)]);
+ const lemmaWord=(m.lemma||guessLemma(w,lang)).toLowerCase();
+ const[exA,defA,lemmaTrRaw]=await Promise.all([
+   m.ex?trText(m.ex,lang):'',
+   m.def?trText(m.def,lang):'',
+   lemmaWord!==w.toLowerCase()?trText(lemmaWord,lang):Promise.resolve(wt.primary||'')
+ ]);
+ const[trVocal,lemmaVocal,sentVocal,exVocal,defVocal]=await Promise.all([
+   fetchVocalizedArabic(wt.primary||'—'),
+   fetchVocalizedArabic(lemmaTrRaw||wt.primary||'—'),
+   fetchVocalizedArabic(st),
+   exA?fetchVocalizedArabic(exA):'',
+   defA?fetchVocalizedArabic(defA):''
+ ]);
+ const posAr=m.pos_ar||(lang==='fr'?'مُفْرَدَةٌ فَرَنْسِيَّةٌ':'مُفْرَدَةٌ إِنْجِلِيزِيَّةٌ');
+ const gram=analyzeNatureAndFonction(w,sent,lang,posAr);
+ const parts=[];
+ if(pt&&ph!==w)parts.push(`فِي العِبَارَةِ المُجَاوِرَةِ («${ph}»): تَعْنِي «${vocalizeArabic(pt)}».`);
+ if(defVocal)parts.push(defVocal);
+ if(wt.alternatives.length)parts.push(`مَعَانٍ أُخْرَى: ${wt.alternatives.map(a=>vocalizeArabic(a)).join('، ')}.`);
+ if(!parts.length)parts.push(`تُتَرْجَمُ «${w}» فِي هَذَا السِّيَاقِ إِلَى «${trVocal}».`);
+ return{
+   source_label:wt.provider,
+   translation_ar:trVocal,
+   explanation_ar:parts.join(' '),
+   ipa:m.ipa,
+   pos_ar:posAr,
+   nature_orig:gram.nature_orig,
+   nature_ar:gram.nature_ar,
+   fonction_orig:gram.fonction_orig,
+   fonction_ar:gram.fonction_ar,
+   lemma:lemmaWord,
+   lemma_translation_ar:lemmaVocal,
+   example_original:m.ex,
+   example_ar:exVocal,
+   sentence_ar:sentVocal
+ }
+}
+
+async function gemini(word,sent,lang,key){
+ const sl=lang==='fr'?'French':'English',str={type:'STRING'};
+ const keys=['translation_ar','explanation_ar','ipa','pos_ar','nature_orig','nature_ar','fonction_orig','fonction_ar','lemma','lemma_translation_ar','example_original','example_ar','sentence_ar'];
+ const d=await jfetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',12000,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},
+  body:JSON.stringify({contents:[{parts:[{text:`Word: "${word}" (${sl})\nSentence: "${sent}"`}]}],systemInstruction:{parts:[{text:`Bilingual contextual dictionary and grammatical analyzer for Arabic speakers reading ${sl}. Always provide exact grammatical nature (nature_orig in ${sl} like "Nom commun masculin", "Verbe transitif", "Adjectif qualificatif", and nature_ar in vocalized Arabic) AND exact syntactic function inside the given sentence (fonction_orig in ${sl} like "Sujet du verbe", "Complément d'objet direct (COD)", "Complément circonstanciel de lieu", and fonction_ar in vocalized Arabic). All Arabic outputs MUST include full Arabic diacritics (التشكيل الكامل بالحركات). Return JSON.`}]},
+   generationConfig:{responseMimeType:'application/json',responseSchema:{type:'OBJECT',properties:Object.fromEntries(keys.map(k=>[k,str])),required:keys}}})});
+ return JSON.parse(d.candidates[0].content.parts[0].text)}
+
+/* ---------- Sentence Selection Handler ---------- */
+async function onSentenceSelect(sentEl,sent,toks,sIdx){
+  clearHighlights();
+  sentEl.classList.add('sent-act');
+  S.activeSentEl=sentEl;
+  S.selIdx=sIdx;
+  if(Speech.loop)Speech.stop();
+  openPanel();
+  const lang=S.lang,req=++S.req;
+  const key=`SENT::${lang}::${sent.length}::${sent.slice(0,80)}`;
+  S.sel={isSentence:true,word:sent.slice(0,40),lang,sentence_original:sent,sentence_ar:'',translation_ar:'',source_label:'تَرْجَمَةُ الجُمْلَةِ'};
+  renderSentencePanel(S.sel,true);
+  if(S.cache.has(key)){
+    const cached=S.cache.get(key);
+    S.sel=cached;
+    renderSentencePanel(cached,false);
+    return;
+  }
+  try{
+    const res=await translate(sent,lang,'ar',1200);
+    const vocalSent=await fetchVocalizedArabic(res.primary);
+    if(req!==S.req)return;
+    const rec={isSentence:true,word:sent.slice(0,40),lang,sentence_original:sent,sentence_ar:vocalSent,translation_ar:vocalSent,source_label:res.provider};
+    S.sel=rec;
+    S.cache.set(key,rec);
+    renderSentencePanel(rec,false);
+  }catch{
+    if(req!==S.req)return;
+    renderSentencePanel({isSentence:true,lang,sentence_original:sent,sentence_ar:'تَعَذَّرَتْ تَرْجَمَةُ الجُمْلَةِ حَالِيًّا. تَحَقَّقْ مِنَ الِاتِّصَالِ.',source_label:'Offline'},false);
+  }
+}
+
+function renderSentencePanel(d,loading){
+  showSkel(false);
+  $('panelHeadTitle').textContent='تَرْجَمَةُ الجُمْلَةِ الكَامِلَةِ';
+  $('engineTag').textContent=d.source_label||'Readdy';
+  $('wordHeaderBox').hidden=true;
+  $('wordAudioBox').hidden=true;
+  $('gramAnalysisBox').hidden=true;
+  $('wordTrBox').hidden=true;
+  $('conjBtnWrap').hidden=true;
+  $('wordExpBox').hidden=true;
+  $('exBox').hidden=true;
+  $('sentSectionBox').style.borderTop='0';
+  $('sentSectionBox').style.paddingTop='0';
+  $('sentBoxLabel').textContent=`الجُمْلَةُ المُخْتَارَةُ (${d.lang.toUpperCase()})`;
+  $('pSO').textContent=d.sentence_original;
+  $('pSA').textContent=loading?'جَارِي تَرْجَمَةُ الجُمْلَةِ وَتَشْكِيلُهَا...':(d.sentence_ar||'—');
+  $('panel').scrollTop=0;
+  repeatUI();
+}
+
+/* ---------- Word Selection Handler ---------- */
+async function onWord(el,word,sent,toks,sIdx){
+ clearHighlights();hl(toks);el.classList.add('act');S.activeEl=el;S.selIdx=sIdx;if(Speech.loop)Speech.stop();openPanel();
+ if(innerWidth<1024){const r=el.getBoundingClientRect();if(r.bottom>innerHeight*.36||r.top<110)scrollBy({top:r.top-innerHeight*.2,behavior:'smooth'})}
+ const lang=S.lang,low=word.toLowerCase().replace(/^['’-]+|['’-]+$/g,''),req=++S.req,hit=LEX[lang][low];
+ if(hit){
+  const lem=hit.lemma||low;
+  const lemTr=lem!==low?(LEX[lang][lem]?.tr||hit.tr):hit.tr;
+  const gram=analyzeNatureAndFonction(word,sent,lang,hit.pos);
+  const rec={word,lang,source_label:'قَامُوسٌ نَحْوِيٌّ',translation_ar:hit.tr,explanation_ar:`${hit.pos}${lem!==low?` — مِنَ المَصْدَرِ «${lem}»`:''}.`,ipa:'',pos_ar:hit.pos,nature_orig:gram.nature_orig,nature_ar:gram.nature_ar,fonction_orig:gram.fonction_orig,fonction_ar:gram.fonction_ar,lemma:lem,lemma_translation_ar:lemTr,example_original:'',example_ar:'',sentence_original:sent,sentence_ar:''};
+  renderPanel(rec);trText(sent,lang).then(async t=>{if(req===S.req&&t){const vt=await fetchVocalizedArabic(t);if(req===S.req){rec.sentence_ar=vt;$('pSA').textContent=vt}}});return}
+ const key=`${lang}::${low}::${sent.length}::${sent.slice(0,60)}`;
+ if(S.cache.has(key)){
+   const cached=S.cache.get(key);
+   if(!cached.nature_orig||!cached.fonction_orig){
+     const g=analyzeNatureAndFonction(word,sent,lang,cached.pos_ar||'');
+     Object.assign(cached,g);
+   }
+   renderPanel(cached);return
+ }
+ showSkel(true);
+ try{let a;if(S.gem.trim().length>10){try{a=await gemini(word,sent,lang,S.gem.trim());a.source_label='Gemini AI'}catch{a=await hybrid(word,sent,lang)}}else a=await hybrid(word,sent,lang);
+  if(req!==S.req)return;
+  if(!a.nature_orig||!a.fonction_orig){
+    const g=analyzeNatureAndFonction(word,sent,lang,a.pos_ar||'');
+    Object.assign(a,g);
+  }
+  const rec={word,lang,sentence_original:sent,...a};S.cache.set(key,rec);try{store.set(K.cache,JSON.stringify(Object.fromEntries([...S.cache].slice(-150))))}catch{}renderPanel(rec)}
+ catch{if(req!==S.req)return;
+  const posFallback=lang==='fr'?'كَلِمَةٌ فَرَنْسِيَّةٌ':'كَلِمَةٌ إِنْجِلِيزِيَّةٌ';
+  const g=analyzeNatureAndFonction(word,sent,lang,posFallback);
+  renderPanel({word,lang,source_label:'Offline',translation_ar:'تَعَذَّرَ الِاتِّصَالُ بِخِدْمَةِ التَّرْجَمَةِ',explanation_ar:'تَحَقَّقْ مِنِ اتِّصَالِ الإِنْتَرْنِت ثُمَّ انْقُرْ عَلَى الكَلِمَةِ مُجَدَّدًا.',ipa:'',pos_ar:posFallback,nature_orig:g.nature_orig,nature_ar:g.nature_ar,fonction_orig:g.fonction_orig,fonction_ar:g.fonction_ar,lemma:guessLemma(low,lang),lemma_translation_ar:'—',example_original:'',example_ar:'',sentence_original:sent,sentence_ar:''})}}
+
+function showSkel(v){$('skel').hidden=!v;$('pContent').hidden=v}
+function openPanel(){$('panel').hidden=false;document.body.classList.add('panel-open')}
+function closePanel(){$('panel').hidden=true;document.body.classList.remove('panel-open');clearHighlights();S.selIdx=-1}
+function renderPanel(d){
+ S.sel=d;showSkel(false);const c=$('pContent');c.style.animation='none';c.offsetWidth;c.style.animation='';
+ $('panelHeadTitle').textContent='التَّرْجَمَةُ وَالتَّحْلِيلُ النَّحْوِيُّ';
+ $('wordHeaderBox').hidden=false;
+ $('wordAudioBox').hidden=false;
+ $('gramAnalysisBox').hidden=false;
+ $('wordTrBox').hidden=false;
+ $('conjBtnWrap').hidden=false;
+ $('wordExpBox').hidden=false;
+ $('sentSectionBox').style.borderTop='1px solid var(--bd)';
+ $('sentSectionBox').style.paddingTop='12px';
+ $('sentBoxLabel').textContent='الجُمْلَةُ الكَامِلَةُ فِي النَّصِّ';
+
+ $('engineTag').textContent=d.source_label||'Readdy';$('pTitle').textContent=d.word;$('pLang').textContent=d.lang.toUpperCase();$('pIpa').textContent=d.ipa||'';$('pIpa').hidden=$('pDot').hidden=!d.ipa;
+ $('pPos').textContent=d.pos_ar||'';
+
+ // Populate Nature & Fonction card
+ $('gramLangBadge').textContent=d.lang==='fr'?'Nature & Fonction (FR)':'Nature & Function (EN)';
+ $('natureLblOrig').textContent=d.lang==='fr'?'Nature grammaticale':'Part of Speech (Nature)';
+ $('fonctionLblOrig').textContent=d.lang==='fr'?'Fonction dans la phrase':'Syntactic Function';
+ $('pNatureOrig').textContent=d.nature_orig||'—';
+ $('pNatureAr').textContent=vocalizeArabic(d.nature_ar||d.pos_ar||'—');
+ $('pFonctionOrig').textContent=d.fonction_orig||'—';
+ $('pFonctionAr').textContent=vocalizeArabic(d.fonction_ar||'—');
+
+ $('pTr').textContent=d.translation_ar;
+ $('pLemmaWord').textContent=d.lemma||guessLemma(d.word,d.lang);
+ $('pLemmaTr').textContent=d.lemma_translation_ar||d.translation_ar||'—';
+ $('pExp').textContent=d.explanation_ar;
+ $('exBox').hidden=!d.example_original;$('pExO').textContent=d.example_original||'';$('pExA').textContent=d.example_ar||'';$('pSO').textContent=d.sentence_original;$('pSA').textContent=d.sentence_ar||'';
+ $('panel').scrollTop=0;updBm();repeatUI()
+}
+function copyTr(){if(!S.sel)return;navigator.clipboard?.writeText(`${S.sel.word} — ${S.sel.translation_ar} (${S.sel.nature_orig} | ${S.sel.fonction_orig})`).catch(()=>{});toast('تم نسخ الترجمة والتحليل النحوي')}
+function copySent(){if(!S.sel)return;navigator.clipboard?.writeText(`${S.sel.sentence_original}\n${S.sel.sentence_ar||''}`).catch(()=>{});toast('تم نسخ الجملة وترجمتها')}
+function sayWord(r){S.sel&&!S.sel.isSentence&&(Speech.speak(S.sel.word,S.sel.lang,r,Speech.loop==='word'?'word':null),repeatUI())}
+function loopWord(){if(!S.sel||S.sel.isSentence)return;Speech.loop==='word'?Speech.stop():(Speech.speak(S.sel.word,S.sel.lang,.85,'word'),repeatUI())}
+function sayEx(r){S.sel?.example_original&&(Speech.speak(S.sel.example_original,S.sel.lang,r),repeatUI())}
+function saySent(r){S.sel&&(Speech.speak(S.sel.sentence_original,S.sel.lang,r,Speech.loop==='sentence'?'sentence':null),repeatUI())}
+function loopSent(){if(!S.sel)return;Speech.loop==='sentence'?Speech.stop():(Speech.speak(S.sel.sentence_original,S.sel.lang,.9,'sentence'),repeatUI())}
+function repeatUI(){$('wRepeat').classList.toggle('on',Speech.loop==='word');$('sRepeat').classList.toggle('on',Speech.loop==='sentence')}
+
+/* ---------- Arabic Pronunciation Helpers ---------- */
+function sayArabicTr(){S.sel?.translation_ar&&Speech.speakArabic(S.sel.translation_ar,.9)}
+function sayArabicLemma(){S.sel?.lemma_translation_ar&&Speech.speakArabic(S.sel.lemma_translation_ar,.9)}
+function sayArabicEx(){S.sel?.example_ar&&Speech.speakArabic(S.sel.example_ar,.9)}
+function sayArabicSent(){S.sel?.sentence_ar&&Speech.speakArabic(S.sel.sentence_ar,.92)}
+
+/* ---------- Verb Conjugation Side Drawer Engine ---------- */
+function closeAllDrawers(){drawer(0);closeConjDrawer()}
+function closeConjDrawer(){$('conjDrawer').classList.remove('open');$('conjDrawer').inert=true;if(!$('drawer').classList.contains('open'))$('bdrop').classList.remove('open')}
+
+function buildLocalConjugation(infinitive,lang){
+  const v=infinitive.toLowerCase().trim();
+  if(lang==='en'){
+    const irr={
+      be:{pres:['I am','You are','He/She/It is','We are','They are'],past:['I was','You were','He/She/It was','We were','They were'],fut:['I will be','You will be','He/She/It will be','We will be','They will be'],perf:['I have been','You have been','He/She/It has been','We have been','They have been'],cont:['I am being','You are being','He/She/It is being','We are being','They are being']},
+      have:{pres:['I have','You have','He/She/It has','We have','They have'],past:['I had','You had','He/She/It had','We had','They had'],fut:['I will have','You will have','He/She/It will have','We will have','They will have'],perf:['I have had','You have had','He/She/It has had','We have had','They have had'],cont:['I am having','You are having','He/She/It is having','We are having','They are having']},
+      do:{pres:['I do','You do','He/She/It does','We do','They do'],past:['I did','You did','He/She/It did','We did','They did'],fut:['I will do','You will do','He/She/It will do','We will do','They will do'],perf:['I have done','You have done','He/She/It has done','We have done','They have done'],cont:['I am doing','You are doing','He/She/It is doing','We are doing','They are doing']},
+      go:{pres:['I go','You go','He/She/It goes','We go','They go'],past:['I went','You went','He/She/It went','We went','They went'],fut:['I will go','You will go','He/She/It will go','We will go','They will go'],perf:['I have gone','You have gone','He/She/It has gone','We have gone','They have gone'],cont:['I am going','You are going','He/She/It is going','We are going','They are going']}
+    };
+    if(irr[v]){
+      const d=irr[v];
+      return[
+        {tense_ar:'المُضَارِعُ البَسِيطُ',tense_orig:'Present Simple',rows:d.pres},
+        {tense_ar:'المَاضِي البَسِيطُ',tense_orig:'Past Simple',rows:d.past},
+        {tense_ar:'المُسْتَقْبَلُ البَسِيطُ',tense_orig:'Future Simple',rows:d.fut},
+        {tense_ar:'المُضَارِعُ التَّامُّ',tense_orig:'Present Perfect',rows:d.perf},
+        {tense_ar:'المُضَارِعُ المُسْتَمِرُّ',tense_orig:'Present Continuous',rows:d.cont}
+      ];
+    }
+    const s3=v.endsWith('y')&&!/[aeiou]y$/.test(v)?v.slice(0,-1)+'ies':/(s|sh|ch|x|z|o)$/.test(v)?v+'es':v+'s';
+    const ed=v.endsWith('e')?v+'d':v.endsWith('y')&&!/[aeiou]y$/.test(v)?v.slice(0,-1)+'ied':v+'ed';
+    const ing=v.endsWith('e')&&!v.endsWith('ee')?v.slice(0,-1)+'ing':v+'ing';
+    return[
+      {tense_ar:'المُضَارِعُ البَسِيطُ',tense_orig:'Present Simple',rows:[`I ${v}`,`You ${v}`,`He / She / It ${s3}`,`We ${v}`,`They ${v}`]},
+      {tense_ar:'المَاضِي البَسِيطُ',tense_orig:'Past Simple',rows:[`I ${ed}`,`You ${ed}`,`He / She / It ${ed}`,`We ${ed}`,`They ${ed}`]},
+      {tense_ar:'المُسْتَقْبَلُ البَسِيطُ',tense_orig:'Future Simple',rows:[`I will ${v}`,`You will ${v}`,`He / She / It will ${v}`,`We will ${v}`,`They will ${v}`]},
+      {tense_ar:'المُضَارِعُ التَّامُّ',tense_orig:'Present Perfect',rows:[`I have ${ed}`,`You have ${ed}`,`He / She / It has ${ed}`,`We have ${ed}`,`They have ${ed}`]},
+      {tense_ar:'المُضَارِعُ المُسْتَمِرُّ',tense_orig:'Present Continuous',rows:[`I am ${ing}`,`You are ${ing}`,`He / She / It is ${ing}`,`We are ${ing}`,`They are ${ing}`]}
+    ];
+  } else {
+    const irr={
+      être:{pres:['je suis','tu es','il/elle est','nous sommes','vous êtes','ils/elles sont'],imp:['j’étais','tu étais','il/elle était','nous étions','vous étiez','ils/elles étaient'],pc:['j’ai été','tu as été','il/elle a été','nous avons été','vous avez été','ils/elles ont été'],fut:['je serai','tu seras','il/elle sera','nous serons','vous serez','ils/elles seront'],cond:['je serais','tu serais','il/elle serait','nous serions','vous seriez','ils/elles seraient'],subj:['que je sois','que tu sois','qu’il/elle soit','que nous soyons','que vous soyez','qu’ils/elles soient']},
+      avoir:{pres:['j’ai','tu as','il/elle a','nous avons','vous avez','ils/elles ont'],imp:['j’avais','tu avais','il/elle avait','nous avions','vous aviez','ils/elles avaient'],pc:['j’ai eu','tu as eu','il/elle a eu','nous avons eu','vous avez eu','ils/elles ont eu'],fut:['j’aurai','tu auras','il/elle aura','nous aurons','vous aurez','ils/elles auront'],cond:['j’aurais','tu aurais','il/elle aurait','nous aurions','vous auriez','ils/elles auraient'],subj:['que j’aie','que tu aies','qu’il/elle ait','que nous ayons','que vous ayez','qu’ils/elles aient']},
+      aller:{pres:['je vais','tu vas','il/elle va','nous allons','vous allez','ils/elles vont'],imp:['j’allais','tu allais','il/elle allait','nous allions','vous alliez','ils/elles allaient'],pc:['je suis allé(e)','tu es allé(e)','il/elle est allé(e)','nous sommes allé(e)s','vous êtes allé(e)s','ils/elles sont allé(e)s'],fut:['j’irai','tu iras','il/elle ira','nous irons','vous irez','ils/elles iront'],cond:['j’irais','tu irais','il/elle irait','nous irions','vous iriez','ils/elles iraient'],subj:['que j’aille','que tu ailles','qu’il/elle aille','que nous allions','que vous alliez','qu’ils/elles aillent']},
+      faire:{pres:['je fais','tu fais','il/elle fait','nous faisons','vous faites','ils/elles font'],imp:['je faisais','tu faisais','il/elle faisait','nous faisions','vous faisiez','ils/elles faisaient'],pc:['j’ai fait','tu as fait','il/elle a fait','nous avons fait','vous avez fait','ils/elles ont fait'],fut:['je ferai','tu feras','il/elle fera','nous ferons','vous ferez','ils/elles feront'],cond:['je ferais','tu ferais','il/elle ferait','nous ferions','vous feriez','ils/elles feraient'],subj:['que je fasse','que tu fasses','qu’il/elle fasse','que nous fassions','que vous fassiez','qu’ils/elles fassent']}
+    };
+    if(irr[v]){
+      const d=irr[v];
+      return[
+        {tense_ar:'الحَاضِرُ (المُضَارِعُ)',tense_orig:'Présent',rows:d.pres},
+        {tense_ar:'المَاضِي المُرَكَّبُ',tense_orig:'Passé composé',rows:d.pc},
+        {tense_ar:'المَاضِي النَّاقِصُ',tense_orig:'Imparfait',rows:d.imp},
+        {tense_ar:'المُسْتَقْبَلُ البَسِيطُ',tense_orig:'Futur simple',rows:d.fut},
+        {tense_ar:'الشَّرْطِيُّ الحَاضِرُ',tense_orig:'Conditionnel présent',rows:d.cond},
+        {tense_ar:'المَنْصُوبُ الحَاضِرُ',tense_orig:'Subjonctif présent',rows:d.subj}
+      ];
+    }
+    const stem=v.endsWith('er')?v.slice(0,-2):v.endsWith('ir')?v.slice(0,-2):v.endsWith('re')?v.slice(0,-2):v;
+    const isIr=v.endsWith('ir')&&!v.endsWith('oir');
+    const pres=isIr?[`je ${stem}is`,`tu ${stem}is`,`il/elle ${stem}it`,`nous ${stem}issons`,`vous ${stem}issez`,`ils/elles ${stem}issent`]:[`je ${stem}e`,`tu ${stem}es`,`il/elle ${stem}e`,`nous ${stem}ons`,`vous ${stem}ez`,`ils/elles ${stem}ent`];
+    const imp=isIr?[`je ${stem}issais`,`tu ${stem}issais`,`il/elle ${stem}issait`,`nous ${stem}issions`,`vous ${stem}issiez`,`ils/elles ${stem}issaient`]:[`je ${stem}ais`,`tu ${stem}ais`,`il/elle ${stem}ait`,`nous ${stem}ions`,`vous ${stem}iez`,`ils/elles ${stem}aient`];
+    const pp=v.endsWith('er')?stem+'é':isIr?stem+'i':stem+'u';
+    const futBase=v.endsWith('re')?v.slice(0,-1):v;
+    return[
+      {tense_ar:'الحَاضِرُ (المُضَارِعُ)',tense_orig:'Présent',rows:pres},
+      {tense_ar:'المَاضِي المُرَكَّبُ',tense_orig:'Passé composé',rows:[`j’ai ${pp}`,`tu as ${pp}`,`il/elle a ${pp}`,`nous avons ${pp}`,`vous avez ${pp}`,`ils/elles ont ${pp}`]},
+      {tense_ar:'المَاضِي النَّاقِصُ',tense_orig:'Imparfait',rows:imp},
+      {tense_ar:'المُسْتَقْبَلُ البَسِيطُ',tense_orig:'Futur simple',rows:[`je ${futBase}ai`,`tu ${futBase}as`,`il/elle ${futBase}a`,`nous ${futBase}ons`,`vous ${futBase}ez`,`ils/elles ${futBase}ont`]},
+      {tense_ar:'الشَّرْطِيُّ الحَاضِرُ',tense_orig:'Conditionnel présent',rows:[`je ${futBase}ais`,`tu ${futBase}ais`,`il/elle ${futBase}ait`,`nous ${futBase}ions`,`vous ${futBase}iez`,`ils/elles ${futBase}aient`]},
+      {tense_ar:'المَنْصُوبُ الحَاضِرُ',tense_orig:'Subjonctif présent',rows:[`que je ${stem}e`,`que tu ${stem}es`,`qu’il/elle ${stem}e`,`que nous ${stem}ions`,`que vous ${stem}iez`,`qu’ils/elles ${stem}ent`]}
+    ];
+  }
+}
+
+async function openConjugationDrawer(){
+  if(!S.sel||S.sel.isSentence)return;
+  const inf=(S.sel.lemma||guessLemma(S.sel.word,S.sel.lang)).toLowerCase();
+  const lang=S.sel.lang;
+  $('drawer').classList.remove('open');$('drawer').inert=true;
+  $('conjDrawer').classList.add('open');$('conjDrawer').inert=false;
+  $('bdrop').classList.add('open');
+  $('conjLangTag').textContent=lang.toUpperCase();
+
+  const cacheKey=`${lang}::${inf}`;
+  if(S.conjCache.has(cacheKey)){
+    renderConjugationData(inf,S.sel.lemma_translation_ar||S.sel.translation_ar,lang,S.conjCache.get(cacheKey));
+    return;
+  }
+
+  const localTables=buildLocalConjugation(inf,lang);
+  renderConjugationData(inf,S.sel.lemma_translation_ar||S.sel.translation_ar,lang,localTables);
+
+  if(S.gem.trim().length>10){
+    try{
+      const sl=lang==='fr'?'French':'English';
+      const d=await jfetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',12000,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-goog-api-key':S.gem.trim()},
+        body:JSON.stringify({
+          contents:[{parts:[{text:`Conjugate the ${sl} verb "${inf}" across all major tenses (Present, Past/Passé composé, Imparfait, Future, Conditional, Subjunctive/Perfect). Return JSON array of objects with keys: tense_ar (with Arabic diacritics), tense_orig, rows (array of strings with pronouns).`}]}],
+          generationConfig:{
+            responseMimeType:'application/json',
+            responseSchema:{
+              type:'ARRAY',
+              items:{
+                type:'OBJECT',
+                properties:{
+                  tense_ar:{type:'STRING'},
+                  tense_orig:{type:'STRING'},
+                  rows:{type:'ARRAY',items:{type:'STRING'}}
+                },
+                required:['tense_ar','tense_orig','rows']
+              }
+            }
+          }
+        })
+      });
+      const aiTables=JSON.parse(d.candidates[0].content.parts[0].text);
+      if(Array.isArray(aiTables)&&aiTables.length){
+        S.conjCache.set(cacheKey,aiTables);
+        if(!$('conjDrawer').inert)renderConjugationData(inf,S.sel.lemma_translation_ar||S.sel.translation_ar,lang,aiTables);
+      }
+    }catch{}
+  }else{
+    S.conjCache.set(cacheKey,localTables);
+  }
+}
+
+function renderConjugationData(inf,trAr,lang,tables){
+  const body=$('conjBody');
+  body.innerHTML=`
+    <div class="conj-head-card">
+      <div>
+        <div style="font-size:11px;color:var(--sub)">المَصْدَرُ الأَسَاسِيُّ لِلْفِعْلِ</div>
+        <div dir="ltr" style="font:700 20px Literata,serif;color:var(--ac)">${esc(inf)}</div>
+      </div>
+      <div style="text-align:left">
+        <div style="font-size:11px;color:var(--sub)">المَعْنَى القِيَاسِيُّ</div>
+        <div class="ar-vow" style="font-size:16px;font-weight:700">${esc(trAr||'—')}</div>
+      </div>
+    </div>
+    ${tables.map(tb=>`
+      <div class="conj-tense">
+        <div class="conj-tense-title"><span class="ar-vow">${esc(tb.tense_ar)}</span><span>${esc(tb.tense_orig)}</span></div>
+        ${tb.rows.map(r=>`
+          <div class="conj-row">
+            <span class="conj-form">${esc(r)}</span>
+            <button class="ibtn sm" style="border:0;background:none;color:var(--ac)" data-say="${esc(r)}" data-lang="${lang}" aria-label="نطق"><i class="ms" style="font-size:17px">volume_up</i></button>
+          </div>
+        `).join('')}
+      </div>
+    `).join('')}
+  `;
+}
+$('conjBody').addEventListener('click',e=>{
+  const b=e.target.closest('[data-say]');
+  if(b)Speech.speak(b.dataset.say,b.dataset.lang,.95);
+});
+
+/* ---------- Flashcards Engine ---------- */
+const FC={deck:[],idx:0,flipped:false,reverse:false};
+function openFlashcards(){
+  if(!S.saved.length){toast('احفظ بعض الكلمات أولاً لبدء المراجعة بالبطاقات');return}
+  FC.deck=[...S.saved];
+  FC.idx=0;
+  FC.flipped=false;
+  drawer(0);
+  renderFlashcard();
+  show('fcModal',1);
+}
+function renderFlashcard(){
+  if(!FC.deck.length)return;
+  const item=FC.deck[FC.idx];
+  const total=FC.deck.length;
+  $('fcCounter').textContent=`بِطَاقَةٌ ${FC.idx+1} مِنْ ${total}`;
+  $('fcBar').style.width=`${((FC.idx+1)/total)*100}%`;
+  $('fcCard').classList.toggle('flipped',FC.flipped);
+
+  const arMeaning=vocalizeArabic(item.translation_ar||'');
+  const arPos=vocalizeArabic(item.nature_ar||item.pos_ar||'');
+
+  if(!FC.reverse){
+    $('fcFrontTag').textContent=item.lang.toUpperCase();
+    $('fcFrontMain').textContent=item.word;
+    $('fcFrontMain').className='fc-word';
+    $('fcFrontMain').dir='ltr';
+    $('fcFrontSub').textContent=item.ipa||(item.nature_orig?`${item.nature_orig}`:'');
+
+    $('fcBackTag').textContent=arPos||'المَعْنَى العَرَبِيُّ المَشْكُولُ';
+    $('fcBackMain').textContent=arMeaning;
+    $('fcBackMain').className='fc-tr ar-vow';
+    $('fcBackMain').dir='rtl';
+    $('fcBackSub').textContent=item.sentence_ar?vocalizeArabic(item.sentence_ar):(item.sentence_original||'');
+  } else {
+    $('fcFrontTag').textContent='المَعْنَى العَرَبِيُّ';
+    $('fcFrontMain').textContent=arMeaning;
+    $('fcFrontMain').className='fc-tr ar-vow';
+    $('fcFrontMain').dir='rtl';
+    $('fcFrontSub').textContent=arPos;
+
+    $('fcBackTag').textContent=item.lang.toUpperCase();
+    $('fcBackMain').textContent=item.word;
+    $('fcBackMain').className='fc-word';
+    $('fcBackMain').dir='ltr';
+    $('fcBackSub').textContent=item.ipa||'';
+  }
+}
+function fcFlip(){FC.flipped=!FC.flipped;$('fcCard').classList.toggle('flipped',FC.flipped)}
+function fcNav(step){
+  if(!FC.deck.length)return;
+  FC.flipped=false;
+  FC.idx=(FC.idx+step+FC.deck.length)%FC.deck.length;
+  renderFlashcard();
+}
+function fcShuffle(){
+  for(let i=FC.deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[FC.deck[i],FC.deck[j]]=[FC.deck[j],FC.deck[i]]}
+  FC.idx=0;FC.flipped=false;renderFlashcard();toast('تم خلط البطاقات عشوائياً');
+}
+function fcToggleDir(){
+  FC.reverse=!FC.reverse;FC.flipped=false;renderFlashcard();
+  toast(FC.reverse?'الوجه الأمامي: المعنى العربي':'الوجه الأمامي: الكلمة الأجنبية');
+}
+function fcSpeakFront(){
+  const item=FC.deck[FC.idx];if(!item)return;
+  FC.reverse?Speech.speakArabic(vocalizeArabic(item.translation_ar),.9):Speech.speak(item.word,item.lang,.92);
+}
+function fcSpeakBack(){
+  const item=FC.deck[FC.idx];if(!item)return;
+  FC.reverse?Speech.speak(item.word,item.lang,.92):Speech.speakArabic(vocalizeArabic(item.translation_ar),.9);
+}
+function fcMarkKnown(){
+  toast('أحسنت! تم اجتياز البطاقة');
+  fcNav(1);
+}
+
+/* ---------- vocabulary ---------- */
+const isBm=w=>S.saved.some(x=>x.word.toLowerCase()===w.toLowerCase());
+const saveVocab=()=>store.set(K.vocab,JSON.stringify(S.saved));
+function syncBm(){const s=new Set(S.saved.map(w=>w.word.toLowerCase()));document.querySelectorAll('.wt').forEach(x=>x.classList.toggle('bm',s.has(x.dataset.w)))}
+function updBm(){if(!S.sel||S.sel.isSentence)return;const b=isBm(S.sel.word);$('bmBtn').classList.toggle('on',b);$('bmIcon').textContent=b?'bookmark_added':'bookmark_add';$('bmIcon').classList.toggle('fill',b)}
+function updBadge(){const n=S.saved.length;$('vCount').textContent=n;$('badge').textContent=n;$('badge').hidden=!n}
+function afterVocab(){saveVocab();updBm();updBadge();renderVocab();syncBm()}
+function toggleBookmark(){if(!S.sel||S.sel.isSentence)return;const i=S.saved.findIndex(w=>w.word.toLowerCase()===S.sel.word.toLowerCase());
+ if(i>=0){S.saved.splice(i,1);toast('تمت إزالة الكلمة من المحفوظات')}else{const d=S.sel;S.saved.unshift({word:d.word,lang:d.lang,ipa:d.ipa||'',translation_ar:d.translation_ar,pos_ar:d.pos_ar||'',nature_orig:d.nature_orig||'',nature_ar:d.nature_ar||'',fonction_orig:d.fonction_orig||'',fonction_ar:d.fonction_ar||'',lemma:d.lemma||'',sentence_original:d.sentence_original||'',sentence_ar:d.sentence_ar||''});toast('تم حفظ الكلمة في المفردات والبطاقات')}afterVocab()}
+function drawer(o){if(o)closeConjDrawer();$('drawer').classList.toggle('open',!!o);$('drawer').inert=!o;$('bdrop').classList.toggle('open',!!o||!$('conjDrawer').inert);if(o)renderVocab()}
+function renderVocab(){const q=$('vsearch').value.trim().toLowerCase(),l=$('vlist'),it=S.saved.filter(x=>x.word.toLowerCase().includes(q)||x.translation_ar.includes(q));
+ if(!it.length){l.innerHTML=`<div class="none"><i class="ms" style="font-size:30px;opacity:.5">bookmark_border</i><p>${S.saved.length?'لا توجد نتائج مطابقة':'لا توجد كلمات محفوظة'}</p></div>`;return}
+ l.innerHTML=it.map(x=>`<div class="vitem"><div><div dir="ltr" class="vw"><span class="tag">${esc(x.lang)}</span><b>${esc(x.word)}</b></div><p class="ar-vow">${esc(vocalizeArabic(x.translation_ar))}</p><div style="font-size:10px;color:var(--sub);margin-top:2px" dir="ltr">${esc(x.nature_orig||'')} ${x.fonction_orig?'• '+esc(x.fonction_orig):''}</div></div>
+  <div style="display:flex;flex:none">
+    <button class="ibtn sm" style="border:0;background:none;color:var(--ac)" data-a="say" data-w="${esc(x.word)}" data-l="${esc(x.lang)}" aria-label="نطق أجنبي"><i class="ms">volume_up</i></button>
+    <button class="ibtn sm" style="border:0;background:none;color:var(--ok)" data-a="sayar" data-ar="${esc(vocalizeArabic(x.translation_ar))}" aria-label="نطق عربي"><i class="ms">record_voice_over</i></button>
+    <button class="ibtn sm" style="border:0;background:none;color:#d93025" data-a="del" data-w="${esc(x.word)}" aria-label="حذف"><i class="ms">delete</i></button>
+  </div></div>`).join('')}
+$('vlist').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;
+ if(b.dataset.a==='say')Speech.speak(b.dataset.w,b.dataset.l);
+ else if(b.dataset.a==='sayar')Speech.speakArabic(b.dataset.ar,.9);
+ else{S.saved=S.saved.filter(w=>w.word.toLowerCase()!==b.dataset.w.toLowerCase());afterVocab()}});
+function exportCSV(){if(!S.saved.length){toast('لا توجد كلمات محفوظة للتصدير');return}
+ const q=v=>{v=String(v||'');if(/^[=+\-@\t\r]/.test(v))v="'"+v;return`"${v.replace(/"/g,'""')}"`};
+ const rows=S.saved.map(w=>[w.word,w.lemma||w.word,w.lang.toUpperCase(),w.ipa,w.nature_orig||w.pos_ar,w.fonction_orig||'',vocalizeArabic(w.translation_ar)].map(q).join(','));
+ const u=URL.createObjectURL(new Blob(['\uFEFF'+['Word,Lemma,Language,IPA,Nature,Fonction,ArabicTranslation',...rows].join('\n')],{type:'text/csv;charset=utf-8;'})),a=document.createElement('a');
+ a.href=u;a.download='readdy-vocabulary.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);toast('تم تصدير ملف المفردات بنجاح')}
+function saveKey(){S.gem=$('gemKey').value.trim();S.gem?store.set(K.gem,S.gem):store.del(K.gem);show('apiModal',0);toast(S.gem?'تم تفعيل مفتاح Gemini AI':'تم اعتماد المحركات المدمجة')}
+function clearCache(){S.cache.clear();S.conjCache.clear();store.del(K.cache);toast('تم مسح الذاكرة المؤقتة')}
+
+/* ---------- init ---------- */
+function boot(){
+  setThemeIcon();
+  Speech.init();
+  updBadge();
+  openWelcome(false);
+  Promise.race([document.fonts.load('20px "Material Symbols Outlined"','search'),new Promise(r=>setTimeout(r,3000))]).catch(()=>{}).then(()=>document.documentElement.classList.add('icons'));
+  $('fileInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f){ingest(f);e.target.value=''}});
+  $('docTitleInput').addEventListener('input',e=>S.title=e.target.value);
+  let dc=0;addEventListener('dragenter',e=>{if(e.dataTransfer?.types?.includes('Files')){dc++;document.body.classList.add('drag')}});
+  addEventListener('dragleave',()=>{dc=Math.max(0,dc-1);if(!dc)document.body.classList.remove('drag')});
+  addEventListener('dragover',e=>e.preventDefault());
+  addEventListener('drop',e=>{e.preventDefault();dc=0;document.body.classList.remove('drag');const f=e.dataTransfer?.files?.[0];if(f)ingest(f)});
+  addEventListener('keydown',e=>{
+    if(!$('fcModal').hidden){
+      if(e.key===' '||e.key==='Enter'){e.preventDefault();fcFlip();return}
+      if(e.key==='ArrowLeft'){fcNav(1);return}
+      if(e.key==='ArrowRight'){fcNav(-1);return}
+    }
+    if(e.key!=='Escape')return;let c=false;['welcomeModal','pasteModal','apiModal','fcModal'].forEach(i=>{if(!$(i).hidden){$(i).hidden=true;c=true}});
+    if(!$('conjDrawer').inert){closeConjDrawer();c=true}
+    if($('drawer').classList.contains('open')){drawer(0);c=true}if(!c&&!$('panel').hidden)closePanel()});
+  document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.hidden=true}));
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',boot)}else{boot()}
+</script>
+</body>
+</html>
